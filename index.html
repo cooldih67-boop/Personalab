@@ -8,552 +8,480 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:#08090d;
+  color:#f5f5f7;
 }
 
-html,
-body {
-  margin: 0;
-  min-height: 100%;
-  font-family:
-    Inter,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    sans-serif;
-  background: #08090d;
-  color: #f5f5f7;
+body{overflow-x:hidden}
+
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+.auth-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:radial-gradient(circle at top,#181c29 0,#08090d 45%);
 }
 
-body {
-  overflow-x: hidden;
+.auth-box{
+  width:min(440px,100%);
+  background:#10131a;
+  border:1px solid #292e3a;
+  border-radius:20px;
+  padding:24px;
+  box-shadow:0 20px 70px #0008;
 }
 
-button,
-input,
-textarea,
-select {
-  font: inherit;
+.auth-logo{
+  font-size:30px;
+  font-weight:900;
+  letter-spacing:-1px;
+  margin-bottom:6px;
 }
 
-button {
-  cursor: pointer;
+.auth-logo span,.logo span{opacity:.4}
+
+.auth-subtitle{
+  color:#9298a5;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:20px;
 }
 
-.hidden {
-  display: none !important;
+.auth-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:14px;
 }
 
-/* =========================
-   AUTH
-========================= */
-
-.auth-screen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background:
-    radial-gradient(circle at top, #181c29 0, #08090d 45%);
+.auth-message{
+  color:#9da4b2;
+  font-size:12px;
+  line-height:1.5;
+  margin-top:13px;
 }
 
-.auth-box {
-  width: min(440px, 100%);
-  background: #10131a;
-  border: 1px solid #292e3a;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 20px 70px #0008;
+.app{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
 }
 
-.auth-logo {
-  font-size: 30px;
-  font-weight: 900;
-  letter-spacing: -1px;
-  margin-bottom: 6px;
+.topbar{
+  height:64px;
+  background:#0c0e14;
+  border-bottom:1px solid #20242e;
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:12px;
+  position:sticky;
+  top:0;
+  z-index:20;
 }
 
-.auth-logo span {
-  opacity: .4;
+.logo{
+  font-size:20px;
+  font-weight:900;
+  letter-spacing:-.5px;
 }
 
-.auth-subtitle {
-  color: #9298a5;
-  font-size: 13px;
-  line-height: 1.5;
-  margin-bottom: 20px;
+.top-status{
+  color:#8e95a3;
+  font-size:12px;
 }
 
-.auth-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 14px;
+.spacer{flex:1}
+
+.layout{
+  display:grid;
+  grid-template-columns:210px minmax(0,1fr) 280px;
+  min-height:calc(100vh - 64px);
 }
 
-.auth-message {
-  color: #9da4b2;
-  font-size: 12px;
-  line-height: 1.5;
-  margin-top: 13px;
+.sidebar{
+  background:#0b0d12;
+  border-right:1px solid #20242e;
+  padding:14px;
 }
 
-/* =========================
-   APP
-========================= */
-
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.topbar {
-  height: 64px;
-  background: #0c0e14;
-  border-bottom: 1px solid #20242e;
-  display: flex;
-  align-items: center;
-  padding: 0 16px;
-  gap: 12px;
-  position: sticky;
-  top: 0;
-  z-index: 20;
-}
-
-.logo {
-  font-size: 20px;
-  font-weight: 900;
-  letter-spacing: -.5px;
-}
-
-.logo span {
-  opacity: .4;
-}
-
-.top-status {
-  color: #8e95a3;
-  font-size: 12px;
-}
-
-.spacer {
-  flex: 1;
-}
-
-/* =========================
-   LAYOUT
-========================= */
-
-.layout {
-  display: grid;
-  grid-template-columns: 210px minmax(0, 1fr) 280px;
-  min-height: calc(100vh - 64px);
-}
-
-.sidebar {
-  background: #0b0d12;
-  border-right: 1px solid #20242e;
-  padding: 14px;
-}
-
-.nav-button {
-  width: 100%;
-  text-align: left;
-  border: 0;
-  background: transparent;
-  color: #aeb4c0;
-  border-radius: 10px;
-  padding: 11px 12px;
-  margin-bottom: 5px;
+.nav-button{
+  width:100%;
+  text-align:left;
+  border:0;
+  background:transparent;
+  color:#aeb4c0;
+  border-radius:10px;
+  padding:11px 12px;
+  margin-bottom:5px;
 }
 
 .nav-button:hover,
-.nav-button.active {
-  background: #171a22;
-  color: #fff;
+.nav-button.active{
+  background:#171a22;
+  color:#fff;
 }
 
-main {
-  min-width: 0;
-  padding: 18px;
+main{
+  min-width:0;
+  padding:18px;
 }
 
-.right-sidebar {
-  background: #0b0d12;
-  border-left: 1px solid #20242e;
-  padding: 15px;
+.right-sidebar{
+  background:#0b0d12;
+  border-left:1px solid #20242e;
+  padding:15px;
 }
 
-/* =========================
-   PAGES
-========================= */
-
-.page {
-  display: none;
-  max-width: 1100px;
-  width: 100%;
-  margin: auto;
+.page{
+  display:none;
+  max-width:1100px;
+  width:100%;
+  margin:auto;
 }
 
-.page.active {
-  display: block;
+.page.active{display:block}
+
+.title{
+  font-size:26px;
+  font-weight:900;
+  letter-spacing:-.7px;
+  margin-bottom:4px;
 }
 
-.title {
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: -.7px;
-  margin-bottom: 4px;
+.subtitle{
+  color:#9298a5;
+  font-size:13px;
+  margin-bottom:18px;
 }
 
-.subtitle {
-  color: #9298a5;
-  font-size: 13px;
-  margin-bottom: 18px;
+.card{
+  background:#10131a;
+  border:1px solid #242934;
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:14px;
 }
 
-/* =========================
-   CARDS
-========================= */
+.card-title{font-weight:800}
 
-.card {
-  background: #10131a;
-  border: 1px solid #242934;
-  border-radius: 15px;
-  padding: 15px;
-  margin-bottom: 14px;
+.card-subtitle{
+  color:#858c9a;
+  font-size:12px;
+  margin-top:4px;
 }
 
-.card-title {
-  font-weight: 800;
+.row{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
 }
 
-.card-subtitle {
-  color: #858c9a;
-  font-size: 12px;
-  margin-top: 4px;
+.between{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
 }
 
-.row {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
 }
 
-.between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+.muted{
+  color:#7f8694;
+  font-size:12px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+.btn{
+  border:1px solid #303541;
+  background:#151821;
+  color:#fff;
+  border-radius:10px;
+  padding:9px 13px;
+  transition:.15s;
 }
 
-.muted {
-  color: #7f8694;
-  font-size: 12px;
+.btn:hover{background:#1d212c}
+
+.btn.primary{
+  background:#fff;
+  color:#08090d;
+  border-color:#fff;
+  font-weight:800;
 }
 
-/* =========================
-   BUTTONS
-========================= */
-
-.btn {
-  border: 1px solid #303541;
-  background: #151821;
-  color: #fff;
-  border-radius: 10px;
-  padding: 9px 13px;
-  transition: .15s;
+.btn.danger{
+  color:#ffb9c0;
+  border-color:#5a2931;
 }
 
-.btn:hover {
-  background: #1d212c;
+.btn.small{
+  padding:7px 10px;
+  font-size:12px;
 }
 
-.btn.primary {
-  background: #fff;
-  color: #08090d;
-  border-color: #fff;
-  font-weight: 800;
+label{
+  display:block;
+  color:#aeb4c0;
+  font-size:12px;
+  margin-bottom:6px;
 }
 
-.btn.danger {
-  color: #ffb9c0;
-  border-color: #5a2931;
+input,textarea,select{
+  width:100%;
+  background:#0b0d12;
+  border:1px solid #2a2f3b;
+  border-radius:10px;
+  color:#fff;
+  padding:10px;
+  outline:none;
 }
 
-.btn.small {
-  padding: 7px 10px;
-  font-size: 12px;
+input:focus,textarea:focus,select:focus{
+  border-color:#737b8d;
 }
 
-/* =========================
-   FORMS
-========================= */
-
-label {
-  display: block;
-  color: #aeb4c0;
-  font-size: 12px;
-  margin-bottom: 6px;
+textarea{
+  min-height:95px;
+  resize:vertical;
 }
 
-input,
-textarea,
-select {
-  width: 100%;
-  background: #0b0d12;
-  border: 1px solid #2a2f3b;
-  border-radius: 10px;
-  color: #fff;
-  padding: 10px;
-  outline: none;
+.chat{
+  height:57vh;
+  min-height:400px;
+  overflow-y:auto;
+  padding:4px;
+  scroll-behavior:smooth;
 }
 
-input:focus,
-textarea:focus,
-select:focus {
-  border-color: #737b8d;
+.message{
+  background:#151821;
+  border:1px solid #232733;
+  border-radius:11px;
+  padding:9px 10px;
+  margin:7px 0;
 }
 
-textarea {
-  min-height: 95px;
-  resize: vertical;
+.message.director{
+  background:#1c1f28;
+  border-color:#565d6d;
 }
 
-/* =========================
-   CHAT
-========================= */
-
-.chat {
-  height: 57vh;
-  min-height: 400px;
-  overflow-y: auto;
-  padding: 4px;
-  scroll-behavior: smooth;
+.message-name{
+  color:#bfc5d1;
+  font-size:11px;
+  font-weight:850;
+  margin-bottom:3px;
 }
 
-.message {
-  background: #151821;
-  border: 1px solid #232733;
-  border-radius: 11px;
-  padding: 9px 10px;
-  margin: 7px 0;
+.message-text{
+  color:#f2f3f5;
+  font-size:14px;
+  line-height:1.45;
+  white-space:pre-wrap;
 }
 
-.message.director {
-  background: #1c1f28;
-  border-color: #565d6d;
+.system-message{
+  color:#747b89;
+  text-align:center;
+  font-size:11px;
+  padding:8px;
 }
 
-.message-name {
-  color: #bfc5d1;
-  font-size: 11px;
-  font-weight: 850;
-  margin-bottom: 3px;
+.typing{
+  color:#8c93a1;
+  font-size:12px;
+  padding:8px 10px;
 }
 
-.message-text {
-  color: #f2f3f5;
-  font-size: 14px;
-  line-height: 1.45;
-  white-space: pre-wrap;
+.director-bar{
+  display:flex;
+  gap:8px;
+  margin-top:10px;
 }
 
-.system-message {
-  color: #747b89;
-  text-align: center;
-  font-size: 11px;
-  padding: 8px;
+.director-bar input{flex:1}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:9px;
 }
 
-.typing {
-  color: #8c93a1;
-  font-size: 12px;
-  padding: 8px 10px;
+.list-item{
+  background:#12151c;
+  border:1px solid #242934;
+  border-radius:11px;
+  padding:12px;
 }
 
-.director-bar {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
+.list-item strong{display:block}
+
+.list-item p{
+  color:#9298a5;
+  font-size:12px;
+  line-height:1.4;
+  margin:6px 0 0;
 }
 
-.director-bar input {
-  flex: 1;
+.badge{
+  display:inline-block;
+  background:#1d212b;
+  color:#bdc3ce;
+  border-radius:999px;
+  font-size:10px;
+  padding:3px 7px;
+  margin:3px 3px 0 0;
 }
 
-/* =========================
-   LISTS
-========================= */
-
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
+.template-card{
+  background:#10131a;
+  border:1px solid #292e3a;
+  border-radius:15px;
+  padding:15px;
+  transition:.15s;
 }
 
-.list-item {
-  background: #12151c;
-  border: 1px solid #242934;
-  border-radius: 11px;
-  padding: 12px;
+.template-card:hover{
+  border-color:#4b5262;
+  transform:translateY(-1px);
 }
 
-.list-item strong {
-  display: block;
+.template-icon{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#191d27;
+  font-size:21px;
+  margin-bottom:10px;
 }
 
-.list-item p {
-  color: #9298a5;
-  font-size: 12px;
-  line-height: 1.4;
-  margin: 6px 0 0;
+.template-name{
+  font-weight:850;
+  font-size:16px;
 }
 
-.badge {
-  display: inline-block;
-  background: #1d212b;
-  color: #bdc3ce;
-  border-radius: 999px;
-  font-size: 10px;
-  padding: 3px 7px;
-  margin: 3px 3px 0 0;
+.template-description{
+  color:#9298a5;
+  font-size:12px;
+  line-height:1.45;
+  margin:6px 0 10px;
 }
 
-/* =========================
-   RIGHT PANEL
-========================= */
-
-.relationship {
-  font-size: 12px;
-  color: #b4bac6;
-  padding: 8px 0;
-  border-bottom: 1px solid #20242d;
+.relationship{
+  font-size:12px;
+  color:#b4bac6;
+  padding:8px 0;
+  border-bottom:1px solid #20242d;
 }
 
-.event {
-  font-size: 12px;
-  color: #aeb4c0;
-  padding: 8px 0;
-  border-bottom: 1px solid #20242d;
+.event{
+  font-size:12px;
+  color:#aeb4c0;
+  padding:8px 0;
+  border-bottom:1px solid #20242d;
 }
 
-/* =========================
-   MODALS
-========================= */
-
-.modal {
-  position: fixed;
-  inset: 0;
-  background: #000b;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 18px;
-  z-index: 100;
+.modal{
+  position:fixed;
+  inset:0;
+  background:#000b;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:100;
 }
 
-.modal.show {
-  display: flex;
+.modal.show{display:flex}
+
+.modal-box{
+  width:min(570px,100%);
+  max-height:90vh;
+  overflow-y:auto;
+  background:#10131a;
+  border:1px solid #2a2f3b;
+  border-radius:17px;
+  padding:18px;
 }
 
-.modal-box {
-  width: min(570px, 100%);
-  max-height: 90vh;
-  overflow-y: auto;
-  background: #10131a;
-  border: 1px solid #2a2f3b;
-  border-radius: 17px;
-  padding: 18px;
+.template-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
 }
 
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 70px minmax(0, 1fr);
+@media(max-width:900px){
+  .layout{
+    grid-template-columns:70px minmax(0,1fr);
   }
 
-  .right-sidebar {
-    display: none;
+  .right-sidebar{display:none}
+
+  .sidebar{padding:8px 6px}
+
+  .nav-button{
+    text-align:center;
+    font-size:0;
+    padding:12px 5px;
   }
 
-  .sidebar {
-    padding: 8px 6px;
-  }
+  .nav-button:first-letter{font-size:19px}
 
-  .nav-button {
-    text-align: center;
-    font-size: 0;
-    padding: 12px 5px;
-  }
+  main{padding:12px}
 
-  .nav-button:first-letter {
-    font-size: 19px;
-  }
-
-  main {
-    padding: 12px;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
+  .grid,.template-grid{
+    grid-template-columns:1fr;
   }
 }
 
-@media (max-width: 520px) {
-  .topbar {
-    height: 58px;
-    padding: 0 10px;
+@media(max-width:520px){
+  .topbar{
+    height:58px;
+    padding:0 10px;
   }
 
-  .top-status {
-    display: none;
+  .top-status{display:none}
+
+  .layout{
+    min-height:calc(100vh - 58px);
   }
 
-  .layout {
-    min-height: calc(100vh - 58px);
+  .title{font-size:23px}
+
+  .chat{
+    min-height:350px;
+    height:57vh;
   }
 
-  .title {
-    font-size: 23px;
-  }
+  .director-bar{flex-direction:column}
 
-  .chat {
-    min-height: 350px;
-    height: 57vh;
-  }
-
-  .director-bar {
-    flex-direction: column;
-  }
-
-  .director-bar .btn {
-    width: 100%;
-  }
+  .director-bar .btn{width:100%}
 }
 </style>
 </head>
 
 <body>
 
-<!-- =========================
-     AUTH SCREEN
-========================= -->
-
 <div id="authScreen" class="auth-screen">
-
   <div class="auth-box">
 
     <div class="auth-logo">
@@ -567,36 +495,18 @@ textarea {
 
     <div>
       <label>Email</label>
-      <input
-        id="authEmail"
-        type="email"
-        autocomplete="email"
-        placeholder="you@example.com"
-      >
+      <input id="authEmail" type="email" autocomplete="email" placeholder="you@example.com">
     </div>
 
     <div style="margin-top:10px">
       <label>Password</label>
-      <input
-        id="authPassword"
-        type="password"
-        autocomplete="current-password"
-        placeholder="At least 6 characters"
-      >
+      <input id="authPassword" type="password" autocomplete="current-password" placeholder="At least 6 characters">
     </div>
 
     <div class="auth-buttons">
-      <button class="btn primary" onclick="signIn()">
-        Sign In
-      </button>
-
-      <button class="btn" onclick="signUp()">
-        Create Account
-      </button>
-
-      <button class="btn" onclick="continueAsGuest()">
-        Continue as Guest
-      </button>
+      <button class="btn primary" onclick="signIn()">Sign In</button>
+      <button class="btn" onclick="signUp()">Create Account</button>
+      <button class="btn" onclick="continueAsGuest()">Continue as Guest</button>
     </div>
 
     <div id="authMessage" class="auth-message"></div>
@@ -607,13 +517,8 @@ textarea {
     </div>
 
   </div>
-
 </div>
 
-
-<!-- =========================
-     MAIN APP
-========================= -->
 
 <div id="app" class="app hidden">
 
@@ -629,10 +534,7 @@ textarea {
 
     <div class="spacer"></div>
 
-    <button
-      class="btn small"
-      onclick="openAccountModal()"
-    >
+    <button class="btn small" onclick="openAccountModal()">
       Account
     </button>
 
@@ -650,39 +552,26 @@ textarea {
 
   <div class="layout">
 
-    <!-- =========================
-         SIDEBAR
-    ========================= -->
-
     <nav class="sidebar">
 
-      <button
-        class="nav-button active"
-        onclick="showPage('lab', this)"
-      >
+      <button class="nav-button active" onclick="showPage('lab',this)">
         🧪 Lab
       </button>
 
-      <button
-        class="nav-button"
-        onclick="showPage('characters', this)"
-      >
+      <button class="nav-button" onclick="showPage('characters',this)">
         👤 Characters
       </button>
 
-      <button
-        class="nav-button"
-        onclick="showPage('rooms', this)"
-      >
+      <button class="nav-button" onclick="showPage('rooms',this)">
         🚪 Rooms
+      </button>
+
+      <button class="nav-button" onclick="showPage('templates',this)">
+        🧩 Templates
       </button>
 
     </nav>
 
-
-    <!-- =========================
-         MAIN
-    ========================= -->
 
     <main>
 
@@ -699,24 +588,17 @@ textarea {
           without you.
         </div>
 
-
         <div class="card">
 
           <div class="between">
 
             <div>
 
-              <div
-                id="roomTitle"
-                class="card-title"
-              >
+              <div id="roomTitle" class="card-title">
                 No room selected
               </div>
 
-              <div
-                id="roomInfo"
-                class="card-subtitle"
-              >
+              <div id="roomInfo" class="card-subtitle">
                 Create a room and add characters.
               </div>
 
@@ -732,10 +614,7 @@ textarea {
                 Start
               </button>
 
-              <button
-                class="btn small"
-                onclick="clearConversation()"
-              >
+              <button class="btn small" onclick="clearConversation()">
                 Clear
               </button>
 
@@ -756,13 +635,10 @@ textarea {
               id="directorInput"
               type="text"
               placeholder="Talk to the simulation..."
-              onkeydown="if(event.key === 'Enter') sendDirectorMessage()"
+              onkeydown="if(event.key==='Enter')sendDirectorMessage()"
             >
 
-            <button
-              class="btn"
-              onclick="sendDirectorMessage()"
-            >
+            <button class="btn" onclick="sendDirectorMessage()">
               Talk
             </button>
 
@@ -784,31 +660,35 @@ textarea {
         <div class="between">
 
           <div>
-
-            <div class="title">
-              Characters
-            </div>
+            <div class="title">Characters</div>
 
             <div class="subtitle">
               Give every character their own personality,
               traits, speaking style and memories.
             </div>
+          </div>
+
+          <div class="row">
+
+            <button
+              class="btn"
+              onclick="showPage('templates',document.querySelectorAll('.nav-button')[3])"
+            >
+              🧩 Templates
+            </button>
+
+            <button
+              class="btn primary"
+              onclick="openCharacterModal()"
+            >
+              + Character
+            </button>
 
           </div>
 
-          <button
-            class="btn primary"
-            onclick="openCharacterModal()"
-          >
-            + Character
-          </button>
-
         </div>
 
-        <div
-          id="characterList"
-          class="list"
-        ></div>
+        <div id="characterList" class="list"></div>
 
       </section>
 
@@ -821,9 +701,7 @@ textarea {
 
           <div>
 
-            <div class="title">
-              Rooms
-            </div>
+            <div class="title">Rooms</div>
 
             <div class="subtitle">
               Put characters together and give them a situation.
@@ -831,49 +709,75 @@ textarea {
 
           </div>
 
-          <button
-            class="btn primary"
-            onclick="openRoomModal()"
-          >
+          <button class="btn primary" onclick="openRoomModal()">
             + Room
           </button>
 
         </div>
 
-        <div
-          id="roomList"
-          class="list"
-        ></div>
+        <div id="roomList" class="list"></div>
+
+      </section>
+
+
+      <!-- TEMPLATES -->
+
+      <section id="page-templates" class="page">
+
+        <div class="between">
+
+          <div>
+
+            <div class="title">
+              Templates
+            </div>
+
+            <div class="subtitle">
+              Start with a personality instead of building one
+              from scratch.
+            </div>
+
+          </div>
+
+          <button
+            class="btn primary"
+            onclick="openTemplateModal()"
+          >
+            + Template
+          </button>
+
+        </div>
+
+        <div class="card">
+
+          <div class="card-title">
+            Character Templates
+          </div>
+
+          <div class="card-subtitle">
+            Pick a personality, customize the copy, and add it
+            to your simulation.
+          </div>
+
+        </div>
+
+        <div id="templateList" class="template-grid"></div>
 
       </section>
 
     </main>
 
 
-    <!-- =========================
-         RIGHT SIDEBAR
-    ========================= -->
-
     <aside class="right-sidebar">
 
       <div class="card">
 
         <div class="between">
-
-          <strong>
-            Relationships
-          </strong>
-
-          <span class="muted">
-            live
-          </span>
-
+          <strong>Relationships</strong>
+          <span class="muted">live</span>
         </div>
 
-        <div
-          id="relationshipList"
-          style="margin-top:8px"
-        ></div>
+        <div id="relationshipList" style="margin-top:8px"></div>
 
       </div>
 
@@ -881,21 +785,11 @@ textarea {
       <div class="card">
 
         <div class="between">
-
-          <strong>
-            Events
-          </strong>
-
-          <span class="muted">
-            recent
-          </span>
-
+          <strong>Events</strong>
+          <span class="muted">recent</span>
         </div>
 
-        <div
-          id="eventList"
-          style="margin-top:8px"
-        ></div>
+        <div id="eventList" style="margin-top:8px"></div>
 
       </div>
 
@@ -906,9 +800,7 @@ textarea {
 </div>
 
 
-<!-- =========================
-     CHARACTER MODAL
-========================= -->
+<!-- CHARACTER MODAL -->
 
 <div id="characterModal" class="modal">
 
@@ -920,106 +812,50 @@ textarea {
         Create Character
       </h2>
 
-      <button
-        class="btn small"
-        onclick="closeModal('characterModal')"
-      >
+      <button class="btn small" onclick="closeModal('characterModal')">
         ✕
       </button>
 
     </div>
 
-    <input
-      id="editingCharacterId"
-      type="hidden"
-    >
+    <input id="editingCharacterId" type="hidden">
 
     <div class="grid">
 
       <div>
-
-        <label>
-          Name
-        </label>
-
-        <input
-          id="characterName"
-          placeholder="Alex"
-        >
-
+        <label>Name</label>
+        <input id="characterName" placeholder="Alex">
       </div>
 
       <div>
-
-        <label>
-          Speaking Style
-        </label>
-
-        <input
-          id="characterSpeaking"
-          placeholder="Sarcastic, quiet, energetic..."
-        >
-
+        <label>Speaking Style</label>
+        <input id="characterSpeaking" placeholder="Sarcastic, quiet, energetic...">
       </div>
 
     </div>
 
-
     <div style="margin-top:10px">
-
-      <label>
-        Personality
-      </label>
-
-      <textarea
-        id="characterPersonality"
-        placeholder="Describe how this person normally behaves."
-      ></textarea>
-
+      <label>Personality</label>
+      <textarea id="characterPersonality" placeholder="Describe how this person normally behaves."></textarea>
     </div>
 
-
     <div style="margin-top:10px">
-
-      <label>
-        Traits
-      </label>
-
-      <input
-        id="characterTraits"
-        placeholder="confident, competitive, curious"
-      >
-
+      <label>Traits</label>
+      <input id="characterTraits" placeholder="confident, competitive, curious">
     </div>
 
-
     <div style="margin-top:10px">
-
-      <label>
-        Memories
-      </label>
-
-      <textarea
-        id="characterMemories"
-        placeholder="Things this character remembers."
-      ></textarea>
-
+      <label>Memories</label>
+      <textarea id="characterMemories" placeholder="Things this character remembers."></textarea>
     </div>
-
 
     <div class="row" style="margin-top:13px">
 
-      <button
-        class="btn primary"
-        onclick="saveCharacter()"
-      >
+      <button class="btn primary" onclick="saveCharacter()">
         Save Character
       </button>
 
-      <button
-        class="btn"
-        onclick="closeModal('characterModal')"
-      >
+      <button class="btn" onclick="closeModal('characterModal')">
         Cancel
       </button>
 
@@ -1030,9 +866,7 @@ textarea {
 </div>
 
 
-<!-- =========================
-     ROOM MODAL
-========================= -->
+<!-- ROOM MODAL -->
 
 <div id="roomModal" class="modal">
 
@@ -1041,75 +875,164 @@ textarea {
     <div class="between">
 
       <h2>
-        <span id="roomModalTitle">
-          Create Room
-        </span>
+        <span id="roomModalTitle">Create Room</span>
       </h2>
 
-      <button
-        class="btn small"
-        onclick="closeModal('roomModal')"
-      >
+      <button class="btn small" onclick="closeModal('roomModal')">
         ✕
       </button>
 
     </div>
 
-    <input
-      id="editingRoomId"
-      type="hidden"
-    >
+    <input id="editingRoomId" type="hidden">
 
-    <label>
-      Room Name
-    </label>
+    <label>Room Name</label>
 
-    <input
-      id="roomName"
-      placeholder="Living Room"
-    >
-
+    <input id="roomName" placeholder="Living Room">
 
     <div style="margin-top:10px">
 
-      <label>
-        Situation / Topic
-      </label>
+      <label>Situation / Topic</label>
+
+      <input id="roomTopic" placeholder="A normal afternoon together.">
+
+    </div>
+
+    <div style="margin-top:12px">
+
+      <label>Characters</label>
+
+      <div id="roomCharacterPicker" class="list"></div>
+
+    </div>
+
+    <div class="row" style="margin-top:13px">
+
+      <button class="btn primary" onclick="saveRoom()">
+        Save Room
+      </button>
+
+      <button class="btn" onclick="closeModal('roomModal')">
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- TEMPLATE MODAL -->
+
+<div id="templateModal" class="modal">
+
+  <div class="modal-box">
+
+    <div class="between">
+
+      <h2 id="templateModalTitle">
+        Create Template
+      </h2>
+
+      <button class="btn small" onclick="closeModal('templateModal')">
+        ✕
+      </button>
+
+    </div>
+
+    <input id="editingTemplateId" type="hidden">
+
+    <label>Template Name</label>
+
+    <input
+      id="templateName"
+      placeholder="The Skeptic"
+    >
+
+    <div style="margin-top:10px">
+
+      <label>Icon</label>
 
       <input
-        id="roomTopic"
-        placeholder="A normal afternoon together."
+        id="templateIcon"
+        placeholder="🧠"
+        maxlength="4"
       >
 
     </div>
 
+    <div style="margin-top:10px">
 
-    <div style="margin-top:12px">
+      <label>Description</label>
 
-      <label>
-        Characters
-      </label>
-
-      <div
-        id="roomCharacterPicker"
-        class="list"
-      ></div>
+      <textarea
+        id="templateDescription"
+        placeholder="A short description of this personality."
+      ></textarea>
 
     </div>
 
+    <div class="grid" style="margin-top:10px">
+
+      <div>
+
+        <label>Speaking Style</label>
+
+        <input
+          id="templateSpeaking"
+          placeholder="Calm, sarcastic..."
+        >
+
+      </div>
+
+      <div>
+
+        <label>Traits</label>
+
+        <input
+          id="templateTraits"
+          placeholder="logical, curious"
+        >
+
+      </div>
+
+    </div>
+
+    <div style="margin-top:10px">
+
+      <label>Personality</label>
+
+      <textarea
+        id="templatePersonality"
+        placeholder="Describe the personality."
+      ></textarea>
+
+    </div>
+
+    <div style="margin-top:10px">
+
+      <label>Memories</label>
+
+      <textarea
+        id="templateMemories"
+        placeholder="Optional starting memories."
+      ></textarea>
+
+    </div>
 
     <div class="row" style="margin-top:13px">
 
       <button
         class="btn primary"
-        onclick="saveRoom()"
+        onclick="saveTemplate()"
       >
-        Save Room
+        Save Template
       </button>
 
       <button
         class="btn"
-        onclick="closeModal('roomModal')"
+        onclick="closeModal('templateModal')"
       >
         Cancel
       </button>
@@ -1121,9 +1044,7 @@ textarea {
 </div>
 
 
-<!-- =========================
-     ACCOUNT MODAL
-========================= -->
+<!-- ACCOUNT MODAL -->
 
 <div id="accountModal" class="modal">
 
@@ -1131,37 +1052,23 @@ textarea {
 
     <div class="between">
 
-      <h2>
-        Account
-      </h2>
+      <h2>Account</h2>
 
-      <button
-        class="btn small"
-        onclick="closeModal('accountModal')"
-      >
+      <button class="btn small" onclick="closeModal('accountModal')">
         ✕
       </button>
 
     </div>
 
-    <p
-      id="accountDetails"
-      class="auth-message"
-    ></p>
+    <p id="accountDetails" class="auth-message"></p>
 
     <div class="row">
 
-      <button
-        class="btn"
-        onclick="saveToCloud()"
-      >
+      <button class="btn" onclick="saveToCloud()">
         Save to Cloud
       </button>
 
-      <button
-        class="btn"
-        onclick="loadCloud()"
-      >
+      <button class="btn" onclick="loadCloud()">
         Load Cloud Data
       </button>
 
@@ -1180,14 +1087,6 @@ textarea {
 
 const SUPABASE_URL =
   "https://riqoxjuzdjqisczezmse.supabase.co";
-
-/*
- IMPORTANT:
- Replace the text below with your Supabase
- publishable/anon key.
-
- DO NOT put your OpenRouter API key here.
-*/
 
 const SUPABASE_ANON_KEY =
   "sb_publishable_gbrG0FYf42bNenKMX45jLg_JJe02Gle";
@@ -1213,23 +1112,16 @@ const supabaseClient =
 
 
 /* =========================================================
-   APP STATE
+   STATE
 ========================================================= */
 
 let currentUser = null;
-
 let guestMode = false;
-
 let simulationRunning = false;
-
 let simulationPaused = false;
-
 let simulationLoopActive = false;
-
 let pendingBatch = null;
-
 let pendingDirectorMessage = "";
-
 let saveTimer = null;
 
 
@@ -1251,6 +1143,8 @@ let data = {
 
   messages: [],
 
+  templates: [],
+
   topic:
     "A normal day together."
 
@@ -1258,50 +1152,162 @@ let data = {
 
 
 /* =========================================================
+   BUILT-IN TEMPLATES
+========================================================= */
+
+const BUILT_IN_TEMPLATES = [
+
+  {
+    id:"builtin_leader",
+    name:"The Leader",
+    icon:"👑",
+    description:"Confident and organized. Naturally takes initiative.",
+    speaking:"Direct, confident, organized.",
+    personality:"Confident, responsible and naturally inclined to take initiative. Likes having a plan but can listen to other people when they make a good point.",
+    traits:["confident","organized","responsible","decisive"],
+    memories:""
+  },
+
+  {
+    id:"builtin_jokester",
+    name:"The Jokester",
+    icon:"😂",
+    description:"Playful, sarcastic and always ready with a joke.",
+    speaking:"Playful, sarcastic, energetic.",
+    personality:"Lighthearted and funny. Uses humor to keep conversations interesting and sometimes jokes when situations become awkward or tense.",
+    traits:["funny","sarcastic","playful","energetic"],
+    memories:""
+  },
+
+  {
+    id:"builtin_quiet",
+    name:"The Quiet One",
+    icon:"🌙",
+    description:"Reserved and observant, but has plenty to say when it matters.",
+    speaking:"Short, calm, thoughtful.",
+    personality:"Quiet and observant. Usually listens before speaking and notices details that other people miss. Becomes more talkative around topics they care about.",
+    traits:["observant","reserved","thoughtful","calm"],
+    memories:""
+  },
+
+  {
+    id:"builtin_skeptic",
+    name:"The Skeptic",
+    icon:"🧠",
+    description:"Questions things and rarely accepts an idea immediately.",
+    speaking:"Logical, questioning, blunt.",
+    personality:"Logical and analytical. Naturally questions assumptions and asks for evidence. Can become frustrated when people make claims without explaining them.",
+    traits:["logical","skeptical","analytical","blunt"],
+    memories:""
+  },
+
+  {
+    id:"builtin_peacemaker",
+    name:"The Peacemaker",
+    icon:"🕊️",
+    description:"Patient and empathetic, often trying to calm disagreements.",
+    speaking:"Patient, warm, measured.",
+    personality:"Empathetic and patient. Tries to understand different sides of an argument and dislikes unnecessary conflict.",
+    traits:["empathetic","patient","supportive","calm"],
+    memories:""
+  },
+
+  {
+    id:"builtin_rival",
+    name:"The Rival",
+    icon:"⚔️",
+    description:"Competitive, proud and easily motivated by a challenge.",
+    speaking:"Confident, competitive, teasing.",
+    personality:"Competitive and ambitious. Enjoys challenges and wants to prove themselves. Can become defensive when they feel underestimated.",
+    traits:["competitive","proud","ambitious","persistent"],
+    memories:""
+  },
+
+  {
+    id:"builtin_curious",
+    name:"The Curious One",
+    icon:"🔎",
+    description:"Asks questions and wants to understand everything.",
+    speaking:"Excited, questioning, expressive.",
+    personality:"Extremely curious and interested in how things work. Asks lots of questions and gets excited when discovering something new.",
+    traits:["curious","inquisitive","enthusiastic","creative"],
+    memories:""
+  },
+
+  {
+    id:"builtin_wildcard",
+    name:"The Wild Card",
+    icon:"🎲",
+    description:"Spontaneous and unpredictable without being random.",
+    speaking:"Fast, energetic, spontaneous.",
+    personality:"Spontaneous and impulsive. Often suggests unexpected ideas and changes direction quickly when something more interesting appears.",
+    traits:["spontaneous","bold","impulsive","creative"],
+    memories:""
+  },
+
+  {
+    id:"builtin_planner",
+    name:"The Planner",
+    icon:"📋",
+    description:"Prepared, methodical and always thinking several steps ahead.",
+    speaking:"Precise, organized, practical.",
+    personality:"Methodical and prepared. Likes knowing what is happening next and thinks carefully about consequences before acting.",
+    traits:["organized","prepared","practical","careful"],
+    memories:""
+  },
+
+  {
+    id:"builtin_overthinker",
+    name:"The Overthinker",
+    icon:"🌀",
+    description:"Analyzes every possibility before making a decision.",
+    speaking:"Thoughtful, hesitant, detailed.",
+    personality:"Thinks deeply about situations and often considers multiple possible outcomes. Can hesitate because they are thinking through every consequence.",
+    traits:["thoughtful","cautious","analytical","sensitive"],
+    memories:""
+  }
+
+];
+
+
+/* =========================================================
    HELPERS
 ========================================================= */
 
-function uid(prefix = "id") {
+function uid(prefix="id"){
 
-  return (
-    prefix +
+  return prefix +
     "_" +
     Math.random()
       .toString(36)
-      .slice(2, 10) +
+      .slice(2,10) +
     "_" +
     Date.now()
-      .toString(36)
-  );
+      .toString(36);
 
 }
 
 
-function wait(ms) {
+function wait(ms){
 
   return new Promise(
-    resolve => setTimeout(resolve, ms)
+    resolve => setTimeout(resolve,ms)
   );
 
 }
 
 
-function clamp(
-  value,
-  min,
-  max
-) {
+function clamp(value,min,max){
 
-  const n =
-    Number(value);
+  const n = Number(value);
 
-  if (!Number.isFinite(n)) {
+  if(!Number.isFinite(n)){
     return 0;
   }
 
   return Math.max(
     min,
-    Math.min(max, n)
+    Math.min(max,n)
   );
 
 }
@@ -1311,30 +1317,25 @@ function clamp(
    LOCAL SAVE
 ========================================================= */
 
-function loadLocal() {
+function loadLocal(){
 
-  try {
+  try{
 
     const saved =
       JSON.parse(
-        localStorage.getItem(
-          STORAGE_KEY
-        )
+        localStorage.getItem(STORAGE_KEY)
       );
 
-    if (
-      saved &&
-      typeof saved === "object"
-    ) {
+    if(saved && typeof saved==="object"){
 
-      data = {
+      data={
         ...data,
         ...saved
       };
 
     }
 
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Local save error:",
@@ -1346,7 +1347,7 @@ function loadLocal() {
 }
 
 
-function saveLocal() {
+function saveLocal(){
 
   localStorage.setItem(
     STORAGE_KEY,
@@ -1356,13 +1357,13 @@ function saveLocal() {
 }
 
 
-function scheduleSave() {
+function scheduleSave(){
 
   saveLocal();
 
   clearTimeout(saveTimer);
 
-  if (currentUser) {
+  if(currentUser){
 
     saveTimer =
       setTimeout(
@@ -1376,54 +1377,40 @@ function scheduleSave() {
 
 
 /* =========================================================
-   CLOUD SAVE
+   CLOUD
 ========================================================= */
 
-async function saveToCloud() {
+async function saveToCloud(){
 
-  if (!currentUser) {
+  if(!currentUser){
 
-    setAccountStatus(
-      "Guest mode"
-    );
+    setAccountStatus("Guest mode");
 
     return;
 
   }
 
-  try {
+  try{
 
-    const {
-      error
-    } =
+    const {error} =
       await supabaseClient
         .from("personala_saves")
         .upsert(
           {
-            user_id:
-              currentUser.id,
-
-            data:
-              data,
-
-            updated_at:
-              new Date().toISOString()
+            user_id:currentUser.id,
+            data:data,
+            updated_at:new Date().toISOString()
           },
           {
-            onConflict:
-              "user_id"
+            onConflict:"user_id"
           }
         );
 
-    if (error) {
-      throw error;
-    }
+    if(error) throw error;
 
-    setAccountStatus(
-      "Saved ✓"
-    );
+    setAccountStatus("Saved ✓");
 
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Cloud save error:",
@@ -1439,52 +1426,40 @@ async function saveToCloud() {
 }
 
 
-async function loadCloud() {
+async function loadCloud(){
 
-  if (!currentUser) {
+  if(!currentUser){
     return;
   }
 
-  try {
+  try{
 
-    const {
-      data: row,
-      error
-    } =
+    const {data:row,error} =
       await supabaseClient
         .from("personala_saves")
         .select("data")
-        .eq(
-          "user_id",
-          currentUser.id
-        )
+        .eq("user_id",currentUser.id)
         .maybeSingle();
 
-    if (error) {
-      throw error;
-    }
+    if(error) throw error;
 
-    if (
-      row &&
-      row.data
-    ) {
+    if(row && row.data){
 
-      data = {
+      data={
         ...data,
         ...row.data
       };
 
       saveLocal();
-
       renderAll();
 
-    } else {
+    }else{
 
       await saveToCloud();
 
     }
 
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "Cloud load error:",
@@ -1504,39 +1479,35 @@ async function loadCloud() {
    AUTH
 ========================================================= */
 
-function setAuthMessage(message) {
+function setAuthMessage(message){
 
   document.getElementById(
     "authMessage"
-  ).textContent =
-    message;
+  ).textContent=message;
 
 }
 
 
-function setAccountStatus(message) {
+function setAccountStatus(message){
 
   document.getElementById(
     "accountStatus"
-  ).textContent =
-    message;
+  ).textContent=message;
 
 }
 
 
-async function signUp() {
+async function signUp(){
 
   const email =
-    document.getElementById(
-      "authEmail"
-    ).value.trim();
+    document.getElementById("authEmail")
+      .value.trim();
 
   const password =
-    document.getElementById(
-      "authPassword"
-    ).value;
+    document.getElementById("authPassword")
+      .value;
 
-  if (!email) {
+  if(!email){
 
     setAuthMessage(
       "Enter your email."
@@ -1546,7 +1517,7 @@ async function signUp() {
 
   }
 
-  if (password.length < 6) {
+  if(password.length<6){
 
     setAuthMessage(
       "Password must be at least 6 characters."
@@ -1560,18 +1531,13 @@ async function signUp() {
     "Creating account..."
   );
 
-  const {
-    data: result,
-    error
-  } =
-    await supabaseClient.auth.signUp(
-      {
-        email,
-        password
-      }
-    );
+  const {data:result,error} =
+    await supabaseClient.auth.signUp({
+      email,
+      password
+    });
 
-  if (error) {
+  if(error){
 
     setAuthMessage(
       error.message
@@ -1581,14 +1547,14 @@ async function signUp() {
 
   }
 
-  if (result.session) {
+  if(result.session){
 
     await enterApp(
       result.user,
       false
     );
 
-  } else {
+  }else{
 
     setAuthMessage(
       "Account created. Check your email if email confirmation is enabled, then sign in."
@@ -1599,19 +1565,17 @@ async function signUp() {
 }
 
 
-async function signIn() {
+async function signIn(){
 
   const email =
-    document.getElementById(
-      "authEmail"
-    ).value.trim();
+    document.getElementById("authEmail")
+      .value.trim();
 
   const password =
-    document.getElementById(
-      "authPassword"
-    ).value;
+    document.getElementById("authPassword")
+      .value;
 
-  if (!email || !password) {
+  if(!email || !password){
 
     setAuthMessage(
       "Enter your email and password."
@@ -1625,19 +1589,14 @@ async function signIn() {
     "Signing in..."
   );
 
-  const {
-    data: result,
-    error
-  } =
+  const {data:result,error} =
     await supabaseClient.auth
-      .signInWithPassword(
-        {
-          email,
-          password
-        }
-      );
+      .signInWithPassword({
+        email,
+        password
+      });
 
-  if (error) {
+  if(error){
 
     setAuthMessage(
       error.message
@@ -1655,11 +1614,10 @@ async function signIn() {
 }
 
 
-function continueAsGuest() {
+function continueAsGuest(){
 
-  guestMode = true;
-
-  currentUser = null;
+  guestMode=true;
+  currentUser=null;
 
   loadLocal();
 
@@ -1671,79 +1629,54 @@ function continueAsGuest() {
 }
 
 
-async function signOut() {
+async function signOut(){
 
-  simulationRunning =
-    false;
-
-  simulationPaused =
-    false;
-
-  pendingBatch =
-    null;
+  simulationRunning=false;
+  simulationPaused=false;
+  pendingBatch=null;
 
   await supabaseClient.auth.signOut();
 
-  currentUser = null;
+  currentUser=null;
+  guestMode=false;
 
-  guestMode = false;
+  document.getElementById("app")
+    .classList.add("hidden");
 
-  document.getElementById(
-    "app"
-  ).classList.add(
-    "hidden"
-  );
-
-  document.getElementById(
-    "authScreen"
-  ).classList.remove(
-    "hidden"
-  );
+  document.getElementById("authScreen")
+    .classList.remove("hidden");
 
 }
 
 
-async function enterApp(
-  user,
-  isGuest
-) {
+async function enterApp(user,isGuest){
 
-  currentUser =
-    user;
+  currentUser=user;
+  guestMode=isGuest;
 
-  guestMode =
-    isGuest;
+  document.getElementById("authScreen")
+    .classList.add("hidden");
 
-  document.getElementById(
-    "authScreen"
-  ).classList.add(
-    "hidden"
-  );
-
-  document.getElementById(
-    "app"
-  ).classList.remove(
-    "hidden"
-  );
+  document.getElementById("app")
+    .classList.remove("hidden");
 
   loadLocal();
 
-  if (user) {
+  if(user){
 
     await loadCloud();
 
   }
 
   updateAccountUI();
-
   renderAll();
 
 }
 
 
-function updateAccountUI() {
+function updateAccountUI(){
 
-  if (currentUser) {
+  if(currentUser){
 
     setAccountStatus(
       currentUser.email
@@ -1751,10 +1684,9 @@ function updateAccountUI() {
 
     document.getElementById(
       "signOutButton"
-    ).style.display =
-      "block";
+    ).style.display="block";
 
-  } else {
+  }else{
 
     setAccountStatus(
       "Guest mode"
@@ -1762,52 +1694,40 @@ function updateAccountUI() {
 
     document.getElementById(
       "signOutButton"
-    ).style.display =
-      "none";
+    ).style.display="none";
 
   }
 
 }
 
 
-/* =========================================================
-   AUTH SESSION CHECK
-========================================================= */
-
 supabaseClient.auth
   .getSession()
-  .then(
-    async ({
-      data: sessionData
-    }) => {
+  .then(async({data:sessionData})=>{
 
-      if (
-        sessionData &&
-        sessionData.session
-      ) {
+    if(
+      sessionData &&
+      sessionData.session
+    ){
 
-        await enterApp(
-          sessionData.session.user,
-          false
-        );
-
-      }
+      await enterApp(
+        sessionData.session.user,
+        false
+      );
 
     }
-  );
+
+  });
 
 
 supabaseClient.auth
   .onAuthStateChange(
-    async (
-      event,
-      session
-    ) => {
+    async(event,session)=>{
 
-      if (
+      if(
         session &&
         !currentUser
-      ) {
+      ){
 
         await enterApp(
           session.user,
@@ -1821,24 +1741,24 @@ supabaseClient.auth
 
 
 /* =========================================================
-   ACCOUNT MODAL
+   ACCOUNT
 ========================================================= */
 
-function openAccountModal() {
+function openAccountModal(){
 
   const details =
     document.getElementById(
       "accountDetails"
     );
 
-  if (currentUser) {
+  if(currentUser){
 
     details.textContent =
       "Signed in as " +
       currentUser.email +
       ". Your PersonaLab data can be synced to Supabase.";
 
-  } else {
+  }else{
 
     details.textContent =
       "You are using Guest mode. Your data is saved in this browser. Create an account if you want cloud saving.";
@@ -1847,9 +1767,7 @@ function openAccountModal() {
 
   document.getElementById(
     "accountModal"
-  ).classList.add(
-    "show"
-  );
+  ).classList.add("show");
 
 }
 
@@ -1858,48 +1776,33 @@ function openAccountModal() {
    NAVIGATION
 ========================================================= */
 
-function showPage(
-  page,
-  button
-) {
+function showPage(page,button){
 
   document
     .querySelectorAll(".page")
     .forEach(
       element =>
-        element.classList.remove(
-          "active"
-        )
+        element.classList.remove("active")
     );
 
   const target =
     document.getElementById(
-      "page-" + page
+      "page-"+page
     );
 
-  if (target) {
-
-    target.classList.add(
-      "active"
-    );
-
+  if(target){
+    target.classList.add("active");
   }
 
   document
     .querySelectorAll(".nav-button")
     .forEach(
       element =>
-        element.classList.remove(
-          "active"
-        )
+        element.classList.remove("active")
     );
 
-  if (button) {
-
-    button.classList.add(
-      "active"
-    );
-
+  if(button){
+    button.classList.add("active");
   }
 
 }
@@ -1909,23 +1812,22 @@ function showPage(
    ROOMS
 ========================================================= */
 
-function getActiveRoom() {
+function getActiveRoom(){
 
   return data.rooms.find(
     room =>
-      room.id ===
-      data.activeRoomId
+      room.id===data.activeRoomId
   ) || null;
 
 }
 
 
-function getActiveCharacters() {
+function getActiveCharacters(){
 
   const room =
     getActiveRoom();
 
-  if (!room) {
+  if(!room){
     return [];
   }
 
@@ -1940,19 +1842,16 @@ function getActiveCharacters() {
 
 
 /* =========================================================
-   RENDER ALL
+   RENDER
 ========================================================= */
 
-function renderAll() {
+function renderAll(){
 
   renderLab();
-
   renderCharacters();
-
   renderRooms();
-
+  renderTemplates();
   renderRelationships();
-
   renderEvents();
 
 }
@@ -1962,7 +1861,7 @@ function renderAll() {
    LAB
 ========================================================= */
 
-function renderLab() {
+function renderLab(){
 
   const room =
     getActiveRoom();
@@ -1988,7 +1887,6 @@ function renderLab() {
       : "Create a room and add characters.";
 
   renderChat();
-
   updateSimulationButton();
 
 }
@@ -1998,211 +1896,135 @@ function renderLab() {
    CHAT
 ========================================================= */
 
-function renderChat() {
+function renderChat(){
 
   const chat =
-    document.getElementById(
-      "chat"
-    );
+    document.getElementById("chat");
 
-  chat.innerHTML = "";
+  chat.innerHTML="";
 
-  for (
+  for(
     const message
     of data.messages || []
-  ) {
+  ){
 
-    if (
-      message.character ===
-      "System"
-    ) {
+    if(message.character==="System"){
 
       const element =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      element.className =
-        "system-message";
+      element.className="system-message";
+      element.textContent=message.message;
 
-      element.textContent =
-        message.message;
-
-      chat.appendChild(
-        element
-      );
+      chat.appendChild(element);
 
       continue;
 
     }
 
     const element =
-      document.createElement(
-        "div"
-      );
+      document.createElement("div");
 
     element.className =
       "message" +
       (
-        message.character ===
-        "Director"
+        message.character==="Director"
           ? " director"
           : ""
       );
 
     const name =
-      document.createElement(
-        "div"
-      );
+      document.createElement("div");
 
-    name.className =
-      "message-name";
-
-    name.textContent =
-      message.character;
+    name.className="message-name";
+    name.textContent=message.character;
 
     const text =
-      document.createElement(
-        "div"
-      );
+      document.createElement("div");
 
-    text.className =
-      "message-text";
+    text.className="message-text";
+    text.textContent=message.message;
 
-    text.textContent =
-      message.message;
+    element.appendChild(name);
+    element.appendChild(text);
 
-    element.appendChild(
-      name
-    );
-
-    element.appendChild(
-      text
-    );
-
-    chat.appendChild(
-      element
-    );
+    chat.appendChild(element);
 
   }
 
-  chat.scrollTop =
-    chat.scrollHeight;
+  chat.scrollTop=chat.scrollHeight;
 
 }
 
 
-function addMessage(
-  character,
-  message
-) {
+function addMessage(character,message){
 
-  data.messages.push(
-    {
-      id:
-        uid("msg"),
+  data.messages.push({
+    id:uid("msg"),
+    character,
+    message,
+    createdAt:Date.now()
+  });
 
-      character,
-
-      message,
-
-      createdAt:
-        Date.now()
-    }
-  );
-
-  if (
-    data.messages.length >
-    250
-  ) {
+  if(data.messages.length>250){
 
     data.messages =
-      data.messages.slice(
-        -250
-      );
+      data.messages.slice(-250);
 
   }
 
   scheduleSave();
-
   renderChat();
 
 }
 
 
-function addSystemMessage(
-  message
-) {
+function addSystemMessage(message){
 
-  data.messages.push(
-    {
-      id:
-        uid("system"),
-
-      character:
-        "System",
-
-      message,
-
-      createdAt:
-        Date.now()
-    }
-  );
+  data.messages.push({
+    id:uid("system"),
+    character:"System",
+    message,
+    createdAt:Date.now()
+  });
 
   scheduleSave();
-
   renderChat();
 
 }
 
 
-function showTypingIndicator(
-  name
-) {
+function showTypingIndicator(name){
 
   removeTypingIndicator();
 
   const chat =
-    document.getElementById(
-      "chat"
-    );
+    document.getElementById("chat");
 
   const element =
-    document.createElement(
-      "div"
-    );
+    document.createElement("div");
 
-  element.id =
-    "typingIndicator";
-
-  element.className =
-    "typing";
-
+  element.id="typingIndicator";
+  element.className="typing";
   element.textContent =
-    name +
-    " is typing…";
+    name+" is typing…";
 
-  chat.appendChild(
-    element
-  );
+  chat.appendChild(element);
 
-  chat.scrollTop =
-    chat.scrollHeight;
+  chat.scrollTop=chat.scrollHeight;
 
 }
 
 
-function removeTypingIndicator() {
+function removeTypingIndicator(){
 
   const element =
     document.getElementById(
       "typingIndicator"
     );
 
-  if (element) {
-
+  if(element){
     element.remove();
-
   }
 
 }
@@ -2212,7 +2034,7 @@ function removeTypingIndicator() {
    DIRECTOR
 ========================================================= */
 
-function sendDirectorMessage() {
+function sendDirectorMessage(){
 
   const input =
     document.getElementById(
@@ -2222,31 +2044,21 @@ function sendDirectorMessage() {
   const message =
     input.value.trim();
 
-  if (!message) {
+  if(!message){
     return;
   }
-
-  /*
-    The Director is a real participant,
-    but only speaks when the user chooses to.
-  */
 
   addMessage(
     "Director",
     message
   );
 
-  /*
-    The AI receives this separately so it knows
-    the Director just spoke.
-  */
-
   pendingDirectorMessage =
     message;
 
-  input.value = "";
+  input.value="";
 
-  if (!simulationRunning) {
+  if(!simulationRunning){
 
     addSystemMessage(
       "Director message queued. Press Start to let the characters respond."
@@ -2258,62 +2070,49 @@ function sendDirectorMessage() {
 
 
 /* =========================================================
-   SIMULATION CONTROLS
+   SIMULATION
 ========================================================= */
 
-function updateSimulationButton() {
+function updateSimulationButton(){
 
   const button =
     document.getElementById(
       "simulationButton"
     );
 
-  if (!button) {
+  if(!button){
     return;
   }
 
-  if (
-    simulationRunning
-  ) {
+  if(simulationRunning){
 
-    button.textContent =
-      "Pause";
+    button.textContent="Pause";
 
-  } else if (
-    simulationPaused
-  ) {
+  }else if(simulationPaused){
 
-    button.textContent =
-      "Resume";
+    button.textContent="Resume";
 
-  } else {
+  }else{
 
-    button.textContent =
-      "Start";
+    button.textContent="Start";
 
   }
 
 }
 
 
-function handleSimulationButton() {
+function handleSimulationButton(){
 
-  if (
-    simulationRunning
-  ) {
+  if(simulationRunning){
 
     pauseSimulation();
-
     return;
 
   }
 
-  if (
-    simulationPaused
-  ) {
+  if(simulationPaused){
 
     resumeSimulation();
-
     return;
 
   }
@@ -2323,7 +2122,7 @@ function handleSimulationButton() {
 }
 
 
-function startSimulation() {
+function startSimulation(){
 
   const room =
     getActiveRoom();
@@ -2331,7 +2130,7 @@ function startSimulation() {
   const characters =
     getActiveCharacters();
 
-  if (!room) {
+  if(!room){
 
     alert(
       "Create or select a room first."
@@ -2341,10 +2140,7 @@ function startSimulation() {
 
   }
 
-  if (
-    characters.length <
-    1
-  ) {
+  if(characters.length<1){
 
     alert(
       "Add at least one character to the room first."
@@ -2354,30 +2150,23 @@ function startSimulation() {
 
   }
 
-  simulationRunning =
-    true;
-
-  simulationPaused =
-    false;
+  simulationRunning=true;
+  simulationPaused=false;
 
   addSystemMessage(
     "Simulation started."
   );
 
   updateSimulationButton();
-
   runSimulationLoop();
 
 }
 
 
-function pauseSimulation() {
+function pauseSimulation(){
 
-  simulationRunning =
-    false;
-
-  simulationPaused =
-    true;
+  simulationRunning=false;
+  simulationPaused=true;
 
   removeTypingIndicator();
 
@@ -2390,63 +2179,43 @@ function pauseSimulation() {
 }
 
 
-function resumeSimulation() {
+function resumeSimulation(){
 
-  if (
-    simulationLoopActive
-  ) {
-
+  if(simulationLoopActive){
     return;
-
   }
 
-  simulationRunning =
-    true;
-
-  simulationPaused =
-    false;
+  simulationRunning=true;
+  simulationPaused=false;
 
   addSystemMessage(
     "Simulation resumed."
   );
 
   updateSimulationButton();
-
   runSimulationLoop();
 
 }
 
 
-/* =========================================================
-   CONTINUOUS SIMULATION
-========================================================= */
+async function runSimulationLoop(){
 
-async function runSimulationLoop() {
-
-  if (
-    simulationLoopActive
-  ) {
-
+  if(simulationLoopActive){
     return;
-
   }
 
-  simulationLoopActive =
-    true;
+  simulationLoopActive=true;
 
-  try {
+  try{
 
-    while (
-      simulationRunning
-    ) {
+    while(simulationRunning){
 
       let batch =
         pendingBatch;
 
-      pendingBatch =
-        null;
+      pendingBatch=null;
 
-      if (!batch) {
+      if(!batch){
 
         const result =
           await callAI(
@@ -2454,57 +2223,36 @@ async function runSimulationLoop() {
             pendingDirectorMessage
           );
 
-        if (!result) {
+        if(!result){
           break;
         }
 
-        /*
-          Only clear the Director message
-          after a successful request.
-        */
-
-        pendingDirectorMessage =
-          "";
-
-        batch =
-          result;
+        pendingDirectorMessage="";
+        batch=result;
 
       }
 
-      if (
-        !simulationRunning
-      ) {
+      if(!simulationRunning){
 
-        pendingBatch =
-          batch;
-
+        pendingBatch=batch;
         break;
 
       }
 
       const completed =
-        await revealBatch(
-          batch
-        );
+        await revealBatch(batch);
 
-      if (!completed) {
+      if(!completed){
         break;
       }
-
-      /*
-        Tiny breathing room before the next
-        AI request.
-      */
 
       await wait(650);
 
     }
 
-  } finally {
+  }finally{
 
-    simulationLoopActive =
-      false;
-
+    simulationLoopActive=false;
     updateSimulationButton();
 
   }
@@ -2512,32 +2260,21 @@ async function runSimulationLoop() {
 }
 
 
-/* =========================================================
-   REVEAL AI BATCH
-========================================================= */
-
-async function revealBatch(
-  batch
-) {
+async function revealBatch(batch){
 
   const turns =
-    Array.isArray(
-      batch.turns
-    )
+    Array.isArray(batch.turns)
       ? batch.turns
       : [];
 
-  if (!turns.length) {
+  if(!turns.length){
 
     addSystemMessage(
       "The characters went quiet. Press Start to continue."
     );
 
-    simulationRunning =
-      false;
-
-    simulationPaused =
-      false;
+    simulationRunning=false;
+    simulationPaused=false;
 
     updateSimulationButton();
 
@@ -2546,83 +2283,54 @@ async function revealBatch(
   }
 
 
-  for (
-    let i = 0;
-    i < turns.length;
+  for(
+    let i=0;
+    i<turns.length;
     i++
-  ) {
+  ){
 
-    if (
-      !simulationRunning
-    ) {
+    if(!simulationRunning){
 
-      pendingBatch = {
-
-        turns:
-          turns.slice(i),
-
-        relationships:
-          batch.relationships ||
-          [],
-
-        events:
-          batch.events ||
-          []
-
+      pendingBatch={
+        turns:turns.slice(i),
+        relationships:batch.relationships || [],
+        events:batch.events || []
       };
 
       return false;
 
     }
 
-
-    const turn =
-      turns[i];
+    const turn=turns[i];
 
     showTypingIndicator(
       turn.character
     );
-
 
     const typingTime =
       Math.min(
         1500,
         Math.max(
           450,
-          turn.message.length * 16
+          turn.message.length*16
         )
       );
 
-    await wait(
-      typingTime
-    );
+    await wait(typingTime);
 
-
-    if (
-      !simulationRunning
-    ) {
+    if(!simulationRunning){
 
       removeTypingIndicator();
 
-      pendingBatch = {
-
-        turns:
-          turns.slice(i),
-
-        relationships:
-          batch.relationships ||
-          [],
-
-        events:
-          batch.events ||
-          []
-
+      pendingBatch={
+        turns:turns.slice(i),
+        relationships:batch.relationships || [],
+        events:batch.events || []
       };
 
       return false;
 
     }
-
 
     removeTypingIndicator();
 
@@ -2631,21 +2339,16 @@ async function revealBatch(
       turn.message
     );
 
-    await wait(
-      250
-    );
+    await wait(250);
 
   }
 
-
   applyRelationshipChanges(
-    batch.relationships ||
-    []
+    batch.relationships || []
   );
 
   addEvents(
-    batch.events ||
-    []
+    batch.events || []
   );
 
   return true;
@@ -2654,13 +2357,13 @@ async function revealBatch(
 
 
 /* =========================================================
-   AI CALL
+   AI
 ========================================================= */
 
 async function callAI(
-  numberOfTurns = 4,
-  directorMessage = ""
-) {
+  numberOfTurns=4,
+  directorMessage=""
+){
 
   const room =
     getActiveRoom();
@@ -2668,112 +2371,77 @@ async function callAI(
   const characters =
     getActiveCharacters();
 
-  if (
-    !room ||
-    !characters.length
-  ) {
+  if(!room || !characters.length){
 
     addSystemMessage(
       "The simulation needs a room with at least one character."
     );
 
-    simulationRunning =
-      false;
+    simulationRunning=false;
 
     return null;
 
   }
 
-
-  try {
+  try{
 
     const response =
       await fetch(
         `${SUPABASE_URL}/functions/v1/${FUNCTION_NAME}`,
         {
+          method:"POST",
 
-          method:
-            "POST",
-
-          headers: {
-
-            "Content-Type":
-              "application/json",
-
-            "apikey":
-              SUPABASE_ANON_KEY,
-
+          headers:{
+            "Content-Type":"application/json",
+            "apikey":SUPABASE_ANON_KEY,
             "Authorization":
               `Bearer ${SUPABASE_ANON_KEY}`
-
           },
 
-          body:
-            JSON.stringify(
-              {
+          body:JSON.stringify({
 
-                characters,
+            characters,
 
-                conversation:
-                  (
-                    data.messages ||
-                    []
-                  ).slice(
-                    -50
-                  ),
+            conversation:
+              (data.messages || [])
+                .slice(-50),
 
-                topic:
-                  room.topic ||
-                  data.topic ||
-                  "A normal day together.",
+            topic:
+              room.topic ||
+              data.topic ||
+              "A normal day together.",
 
-                turns:
-                  numberOfTurns,
+            turns:numberOfTurns,
 
-                relationships:
-                  data.relationships ||
-                  [],
+            relationships:
+              data.relationships || [],
 
-                directorMessage:
-                  directorMessage ||
-                  ""
+            directorMessage:
+              directorMessage || ""
 
-              }
-            )
-
+          })
         }
       );
-
 
     const raw =
       await response.text();
 
-
     let result;
 
-    try {
+    try{
 
-      result =
-        JSON.parse(
-          raw
-        );
+      result=JSON.parse(raw);
 
-    } catch {
+    }catch{
 
       throw new Error(
-        "Supabase returned invalid JSON: " +
-        raw.slice(
-          0,
-          1000
-        )
+        "Supabase returned invalid JSON: "+
+        raw.slice(0,1000)
       );
 
     }
 
-
-    if (
-      !response.ok
-    ) {
+    if(!response.ok){
 
       throw new Error(
         `Supabase function error ${response.status}: ${
@@ -2783,10 +2451,7 @@ async function callAI(
 
     }
 
-
-    if (
-      result.error
-    ) {
+    if(result.error){
 
       throw new Error(
         result.error
@@ -2794,10 +2459,9 @@ async function callAI(
 
     }
 
-
     return result;
 
-  } catch (error) {
+  }catch(error){
 
     console.error(
       "PersonaLab AI error:",
@@ -2805,15 +2469,12 @@ async function callAI(
     );
 
     addSystemMessage(
-      "AI error: " +
+      "AI error: "+
       error.message
     );
 
-    simulationRunning =
-      false;
-
-    simulationPaused =
-      false;
+    simulationRunning=false;
+    simulationPaused=false;
 
     updateSimulationButton();
 
@@ -2828,44 +2489,25 @@ async function callAI(
    RELATIONSHIPS
 ========================================================= */
 
-function applyRelationshipChanges(
-  changes
-) {
+function applyRelationshipChanges(changes){
 
-  for (
-    const change
-    of changes
-  ) {
+  for(const change of changes){
 
     let relationship =
       data.relationships.find(
         item =>
-          item.from ===
-            change.from &&
-          item.to ===
-            change.to
+          item.from===change.from &&
+          item.to===change.to
       );
 
+    if(!relationship){
 
-    if (!relationship) {
-
-      relationship = {
-
-        from:
-          change.from,
-
-        to:
-          change.to,
-
-        friendship:
-          0,
-
-        trust:
-          0,
-
-        tension:
-          0
-
+      relationship={
+        from:change.from,
+        to:change.to,
+        friendship:0,
+        trust:0,
+        tension:0
       };
 
       data.relationships.push(
@@ -2874,53 +2516,26 @@ function applyRelationshipChanges(
 
     }
 
-
     relationship.friendship =
       clamp(
-        (
-          relationship.friendship ||
-          0
-        ) +
-        (
-          Number(
-            change.friendship
-          ) ||
-          0
-        ),
+        (relationship.friendship||0)+
+        (Number(change.friendship)||0),
         -100,
         100
       );
-
 
     relationship.trust =
       clamp(
-        (
-          relationship.trust ||
-          0
-        ) +
-        (
-          Number(
-            change.trust
-          ) ||
-          0
-        ),
+        (relationship.trust||0)+
+        (Number(change.trust)||0),
         -100,
         100
       );
 
-
     relationship.tension =
       clamp(
-        (
-          relationship.tension ||
-          0
-        ) +
-        (
-          Number(
-            change.tension
-          ) ||
-          0
-        ),
+        (relationship.tension||0)+
+        (Number(change.tension)||0),
         0,
         100
       );
@@ -2928,45 +2543,36 @@ function applyRelationshipChanges(
   }
 
   scheduleSave();
-
   renderRelationships();
 
 }
 
 
-function renderRelationships() {
+function renderRelationships(){
 
   const box =
     document.getElementById(
       "relationshipList"
     );
 
-  box.innerHTML = "";
+  box.innerHTML="";
 
   const characters =
     getActiveCharacters();
 
   const names =
     new Set(
-      characters.map(
-        c => c.name
-      )
+      characters.map(c=>c.name)
     );
 
   const relationships =
     data.relationships.filter(
       relationship =>
-        names.has(
-          relationship.from
-        ) &&
-        names.has(
-          relationship.to
-        )
+        names.has(relationship.from) &&
+        names.has(relationship.to)
     );
 
-  if (
-    !relationships.length
-  ) {
+  if(!relationships.length){
 
     box.innerHTML =
       '<div class="muted">No relationship changes yet.</div>';
@@ -2975,32 +2581,24 @@ function renderRelationships() {
 
   }
 
-
   relationships
-    .slice(
-      -20
-    )
+    .slice(-20)
     .reverse()
     .forEach(
-      relationship => {
+      relationship=>{
 
         const element =
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
-        element.className =
-          "relationship";
+        element.className="relationship";
 
         element.textContent =
-          `${relationship.from} → ${relationship.to} • ` +
-          `F:${relationship.friendship || 0} ` +
-          `T:${relationship.trust || 0} ` +
-          `⚡:${relationship.tension || 0}`;
+          `${relationship.from} → ${relationship.to} • `+
+          `F:${relationship.friendship||0} `+
+          `T:${relationship.trust||0} `+
+          `⚡:${relationship.tension||0}`;
 
-        box.appendChild(
-          element
-        );
+        box.appendChild(element);
 
       }
     );
@@ -3012,66 +2610,48 @@ function renderRelationships() {
    EVENTS
 ========================================================= */
 
-function addEvents(
-  events
-) {
+function addEvents(events){
 
-  for (
-    const event
-    of events
-  ) {
+  for(const event of events){
 
-    if (
+    if(
       !event ||
       !event.description
-    ) {
-
+    ){
       continue;
-
     }
 
-    data.events.unshift(
-      {
+    data.events.unshift({
 
-        id:
-          uid("event"),
+      id:uid("event"),
 
-        description:
-          event.description,
+      description:event.description,
 
-        createdAt:
-          Date.now()
+      createdAt:Date.now()
 
-      }
-    );
+    });
 
   }
 
   data.events =
-    data.events.slice(
-      0,
-      30
-    );
+    data.events.slice(0,30);
 
   scheduleSave();
-
   renderEvents();
 
 }
 
 
-function renderEvents() {
+function renderEvents(){
 
   const box =
     document.getElementById(
       "eventList"
     );
 
-  box.innerHTML = "";
+  box.innerHTML="";
 
-  if (
-    !data.events.length
-  ) {
+  if(!data.events.length){
 
     box.innerHTML =
       '<div class="muted">Nothing notable yet.</div>';
@@ -3080,29 +2660,19 @@ function renderEvents() {
 
   }
 
-
   data.events
-    .slice(
-      0,
-      10
-    )
+    .slice(0,10)
     .forEach(
-      event => {
+      event=>{
 
         const element =
-          document.createElement(
-            "div"
-          );
+          document.createElement("div");
 
-        element.className =
-          "event";
-
-        element.textContent =
+        element.className="event";
+        element.textContent=
           event.description;
 
-        box.appendChild(
-          element
-        );
+        box.appendChild(element);
 
       }
     );
@@ -3111,41 +2681,28 @@ function renderEvents() {
 
 
 /* =========================================================
-   CLEAR CHAT
+   CLEAR
 ========================================================= */
 
-function clearConversation() {
+function clearConversation(){
 
-  if (
+  if(
     !confirm(
       "Clear the current conversation?"
     )
-  ) {
-
+  ){
     return;
-
   }
 
-  simulationRunning =
-    false;
+  simulationRunning=false;
+  simulationPaused=false;
+  pendingBatch=null;
+  pendingDirectorMessage="";
 
-  simulationPaused =
-    false;
-
-  pendingBatch =
-    null;
-
-  pendingDirectorMessage =
-    "";
-
-  data.messages =
-    [];
-
-  data.events =
-    [];
+  data.messages=[];
+  data.events=[];
 
   scheduleSave();
-
   renderAll();
 
 }
@@ -3155,87 +2712,64 @@ function clearConversation() {
    CHARACTER CREATOR
 ========================================================= */
 
-function openCharacterModal(
-  id = null
-) {
+function openCharacterModal(id=null){
 
   document.getElementById(
     "editingCharacterId"
-  ).value =
-    id || "";
+  ).value=id || "";
 
   document.getElementById(
     "characterModalTitle"
-  ).textContent =
+  ).textContent=
     id
       ? "Edit Character"
       : "Create Character";
 
-
   const character =
     id
-      ? data.characters.find(
-          c => c.id === id
-        )
+      ? data.characters.find(c=>c.id===id)
       : null;
-
 
   document.getElementById(
     "characterName"
-  ).value =
-    character?.name ||
-    "";
-
+  ).value=
+    character?.name || "";
 
   document.getElementById(
     "characterSpeaking"
-  ).value =
-    character?.speaking ||
-    "";
-
+  ).value=
+    character?.speaking || "";
 
   document.getElementById(
     "characterPersonality"
-  ).value =
-    character?.personality ||
-    "";
-
+  ).value=
+    character?.personality || "";
 
   document.getElementById(
     "characterTraits"
-  ).value =
-    (
-      character?.traits ||
-      []
-    ).join(
-      ", "
-    );
-
+  ).value=
+    (character?.traits || []).join(", ");
 
   document.getElementById(
     "characterMemories"
-  ).value =
-    character?.memories ||
-    "";
-
+  ).value=
+    character?.memories || "";
 
   document.getElementById(
     "characterModal"
-  ).classList.add(
-    "show"
-  );
+  ).classList.add("show");
 
 }
 
 
-function saveCharacter() {
+function saveCharacter(){
 
   const name =
     document.getElementById(
       "characterName"
     ).value.trim();
 
-  if (!name) {
+  if(!name){
 
     alert(
       "Give the character a name."
@@ -3245,14 +2779,12 @@ function saveCharacter() {
 
   }
 
-
   const id =
     document.getElementById(
       "editingCharacterId"
     ).value;
 
-
-  const character = {
+  const character={
 
     id:
       id ||
@@ -3275,10 +2807,7 @@ function saveCharacter() {
         "characterTraits"
       ).value
         .split(",")
-        .map(
-          value =>
-            value.trim()
-        )
+        .map(value=>value.trim())
         .filter(Boolean),
 
     memories:
@@ -3288,28 +2817,22 @@ function saveCharacter() {
 
   };
 
-
   const index =
     data.characters.findIndex(
-      c => c.id === id
+      c=>c.id===id
     );
 
+  if(index>=0){
 
-  if (
-    index >= 0
-  ) {
+    data.characters[index]=character;
 
-    data.characters[index] =
-      character;
-
-  } else {
+  }else{
 
     data.characters.push(
       character
     );
 
   }
-
 
   scheduleSave();
 
@@ -3322,56 +2845,53 @@ function saveCharacter() {
 }
 
 
-function deleteCharacter(
-  id
-) {
+function deleteCharacter(id){
 
-  if (
+  if(
     !confirm(
       "Delete this character?"
     )
-  ) {
-
+  ){
     return;
-
   }
 
+  const character =
+    data.characters.find(
+      c=>c.id===id
+    );
+
+  const deletedName =
+    character?.name;
 
   data.characters =
     data.characters.filter(
-      c => c.id !== id
+      c=>c.id!==id
     );
 
-
   data.rooms.forEach(
-    room => {
+    room=>{
 
       room.characterIds =
         room.characterIds.filter(
           characterId =>
-            characterId !== id
+            characterId!==id
         );
 
     }
   );
 
+  if(deletedName){
 
-  data.relationships =
-    data.relationships.filter(
-      relationship =>
-        relationship.from !==
-          data.characters.find(
-            c => c.id === id
-          )?.name &&
-        relationship.to !==
-          data.characters.find(
-            c => c.id === id
-          )?.name
-    );
+    data.relationships =
+      data.relationships.filter(
+        relationship =>
+          relationship.from!==deletedName &&
+          relationship.to!==deletedName
+      );
 
+  }
 
   scheduleSave();
-
   renderAll();
 
 }
@@ -3381,176 +2901,126 @@ function deleteCharacter(
    CHARACTER LIST
 ========================================================= */
 
-function renderCharacters() {
+function renderCharacters(){
 
   const box =
     document.getElementById(
       "characterList"
     );
 
-  box.innerHTML = "";
+  box.innerHTML="";
 
-  if (
-    !data.characters.length
-  ) {
+  if(!data.characters.length){
 
     box.innerHTML =
-      '<div class="card"><div class="muted">No characters yet.</div></div>';
+      '<div class="card"><div class="muted">No characters yet. Try a template.</div></div>';
 
     return;
 
   }
 
-
   data.characters.forEach(
-    character => {
+    character=>{
 
       const element =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      element.className =
-        "list-item";
-
+      element.className="list-item";
 
       const header =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      header.className =
-        "between";
-
+      header.className="between";
 
       const name =
-        document.createElement(
-          "strong"
-        );
+        document.createElement("strong");
 
-      name.textContent =
+      name.textContent=
         character.name;
 
-
       const actions =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      actions.className =
-        "row";
+      actions.className="row";
 
+      const saveTemplateButton =
+        document.createElement("button");
 
-      const edit =
-        document.createElement(
-          "button"
-        );
-
-      edit.className =
+      saveTemplateButton.className=
         "btn small";
 
-      edit.textContent =
-        "Edit";
+      saveTemplateButton.textContent=
+        "Save as Template";
 
-      edit.onclick =
-        () =>
-          openCharacterModal(
-            character.id
-          );
+      saveTemplateButton.onclick=
+        ()=>saveCharacterAsTemplate(
+          character
+        );
 
+      const edit =
+        document.createElement("button");
+
+      edit.className="btn small";
+      edit.textContent="Edit";
+
+      edit.onclick=
+        ()=>openCharacterModal(
+          character.id
+        );
 
       const remove =
-        document.createElement(
-          "button"
-        );
+        document.createElement("button");
 
-      remove.className =
+      remove.className=
         "btn small danger";
 
-      remove.textContent =
-        "Delete";
+      remove.textContent="Delete";
 
-      remove.onclick =
-        () =>
-          deleteCharacter(
-            character.id
-          );
-
-
-      actions.appendChild(
-        edit
-      );
-
-      actions.appendChild(
-        remove
-      );
-
-      header.appendChild(
-        name
-      );
-
-      header.appendChild(
-        actions
-      );
-
-
-      const personality =
-        document.createElement(
-          "p"
+      remove.onclick=
+        ()=>deleteCharacter(
+          character.id
         );
 
-      personality.textContent =
+      actions.appendChild(
+        saveTemplateButton
+      );
+
+      actions.appendChild(edit);
+      actions.appendChild(remove);
+
+      header.appendChild(name);
+      header.appendChild(actions);
+
+      const personality =
+        document.createElement("p");
+
+      personality.textContent=
         character.personality ||
         "No personality description.";
 
-
       const traits =
-        document.createElement(
-          "div"
+        document.createElement("div");
+
+      (character.traits||[])
+        .forEach(
+          trait=>{
+
+            const badge =
+              document.createElement("span");
+
+            badge.className="badge";
+            badge.textContent=trait;
+
+            traits.appendChild(badge);
+
+          }
         );
 
+      element.appendChild(header);
+      element.appendChild(personality);
+      element.appendChild(traits);
 
-      (
-        character.traits ||
-        []
-      ).forEach(
-        trait => {
-
-          const badge =
-            document.createElement(
-              "span"
-            );
-
-          badge.className =
-            "badge";
-
-          badge.textContent =
-            trait;
-
-          traits.appendChild(
-            badge
-          );
-
-        }
-      );
-
-
-      element.appendChild(
-        header
-      );
-
-      element.appendChild(
-        personality
-      );
-
-      element.appendChild(
-        traits
-      );
-
-
-      box.appendChild(
-        element
-      );
+      box.appendChild(element);
 
     }
   );
@@ -3562,101 +3032,66 @@ function renderCharacters() {
    ROOM CREATOR
 ========================================================= */
 
-function openRoomModal(
-  id = null
-) {
+function openRoomModal(id=null){
 
   document.getElementById(
     "editingRoomId"
-  ).value =
-    id || "";
-
+  ).value=id || "";
 
   const room =
     id
-      ? data.rooms.find(
-          r => r.id === id
-        )
+      ? data.rooms.find(r=>r.id===id)
       : null;
-
 
   document.getElementById(
     "roomName"
-  ).value =
-    room?.name ||
-    "";
-
+  ).value=
+    room?.name || "";
 
   document.getElementById(
     "roomTopic"
-  ).value =
+  ).value=
     room?.topic ||
     "A normal day together.";
-
 
   const picker =
     document.getElementById(
       "roomCharacterPicker"
     );
 
-  picker.innerHTML = "";
+  picker.innerHTML="";
 
-
-  if (
-    !data.characters.length
-  ) {
+  if(!data.characters.length){
 
     picker.innerHTML =
       '<div class="muted">Create some characters first.</div>';
 
-  } else {
+  }else{
 
     data.characters.forEach(
-      character => {
+      character=>{
 
         const label =
-          document.createElement(
-            "label"
-          );
+          document.createElement("label");
 
-        label.style.display =
-          "flex";
-
-        label.style.alignItems =
-          "center";
-
-        label.style.gap =
-          "8px";
-
-        label.style.background =
-          "#0b0d12";
-
-        label.style.border =
-          "1px solid #252a35";
-
-        label.style.borderRadius =
-          "9px";
-
-        label.style.padding =
-          "9px";
-
+        label.style.display="flex";
+        label.style.alignItems="center";
+        label.style.gap="8px";
+        label.style.background="#0b0d12";
+        label.style.border="1px solid #252a35";
+        label.style.borderRadius="9px";
+        label.style.padding="9px";
 
         const checkbox =
-          document.createElement(
-            "input"
-          );
+          document.createElement("input");
 
-        checkbox.type =
-          "checkbox";
-
-        checkbox.value =
+        checkbox.type="checkbox";
+        checkbox.value=
           character.id;
 
-        checkbox.style.width =
-          "auto";
+        checkbox.style.width="auto";
 
-
-        checkbox.checked =
+        checkbox.checked=
           !!(
             room &&
             room.characterIds &&
@@ -3665,10 +3100,7 @@ function openRoomModal(
             )
           );
 
-
-        label.appendChild(
-          checkbox
-        );
+        label.appendChild(checkbox);
 
         label.appendChild(
           document.createTextNode(
@@ -3676,34 +3108,28 @@ function openRoomModal(
           )
         );
 
-
-        picker.appendChild(
-          label
-        );
+        picker.appendChild(label);
 
       }
     );
 
   }
 
-
   document.getElementById(
     "roomModal"
-  ).classList.add(
-    "show"
-  );
+  ).classList.add("show");
 
 }
 
 
-function saveRoom() {
+function saveRoom(){
 
   const name =
     document.getElementById(
       "roomName"
     ).value.trim();
 
-  if (!name) {
+  if(!name){
 
     alert(
       "Give the room a name."
@@ -3713,12 +3139,10 @@ function saveRoom() {
 
   }
 
-
   const id =
     document.getElementById(
       "editingRoomId"
     ).value;
-
 
   const characterIds =
     Array.from(
@@ -3726,12 +3150,10 @@ function saveRoom() {
         "#roomCharacterPicker input[type='checkbox']:checked"
       )
     ).map(
-      checkbox =>
-        checkbox.value
+      checkbox=>checkbox.value
     );
 
-
-  const room = {
+  const room={
 
     id:
       id ||
@@ -3748,46 +3170,31 @@ function saveRoom() {
 
   };
 
-
   const index =
     data.rooms.findIndex(
-      room =>
-        room.id === id
+      room=>room.id===id
     );
 
+  if(index>=0){
 
-  if (
-    index >= 0
-  ) {
+    data.rooms[index]=room;
 
-    data.rooms[index] =
-      room;
+  }else{
 
-  } else {
-
-    data.rooms.push(
-      room
-    );
+    data.rooms.push(room);
 
   }
 
+  if(!data.activeRoomId){
 
-  if (
-    !data.activeRoomId
-  ) {
-
-    data.activeRoomId =
+    data.activeRoomId=
       room.id;
 
   }
 
-
   scheduleSave();
 
-  closeModal(
-    "roomModal"
-  );
-
+  closeModal("roomModal");
   renderAll();
 
 }
@@ -3797,19 +3204,16 @@ function saveRoom() {
    ROOM LIST
 ========================================================= */
 
-function renderRooms() {
+function renderRooms(){
 
   const box =
     document.getElementById(
       "roomList"
     );
 
-  box.innerHTML = "";
+  box.innerHTML="";
 
-
-  if (
-    !data.rooms.length
-  ) {
+  if(!data.rooms.length){
 
     box.innerHTML =
       '<div class="card"><div class="muted">No rooms yet.</div></div>';
@@ -3818,163 +3222,87 @@ function renderRooms() {
 
   }
 
-
   data.rooms.forEach(
-    room => {
+    room=>{
 
       const element =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      element.className =
-        "list-item";
-
+      element.className="list-item";
 
       const header =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      header.className =
-        "between";
-
+      header.className="between";
 
       const name =
-        document.createElement(
-          "strong"
-        );
+        document.createElement("strong");
 
-      name.textContent =
+      name.textContent=
         room.name;
 
-
       const actions =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      actions.className =
-        "row";
-
+      actions.className="row";
 
       const enter =
-        document.createElement(
-          "button"
-        );
+        document.createElement("button");
 
-      enter.className =
-        "btn small";
+      enter.className="btn small";
+      enter.textContent="Enter";
 
-      enter.textContent =
-        "Enter";
-
-      enter.onclick =
-        () =>
-          selectRoom(
-            room.id
-          );
-
+      enter.onclick=
+        ()=>selectRoom(room.id);
 
       const edit =
-        document.createElement(
-          "button"
-        );
+        document.createElement("button");
 
-      edit.className =
-        "btn small";
+      edit.className="btn small";
+      edit.textContent="Edit";
 
-      edit.textContent =
-        "Edit";
-
-      edit.onclick =
-        () =>
-          openRoomModal(
-            room.id
-          );
-
+      edit.onclick=
+        ()=>openRoomModal(room.id);
 
       const remove =
-        document.createElement(
-          "button"
-        );
+        document.createElement("button");
 
-      remove.className =
+      remove.className=
         "btn small danger";
 
-      remove.textContent =
-        "Delete";
+      remove.textContent="Delete";
 
-      remove.onclick =
-        () =>
-          deleteRoom(
-            room.id
-          );
+      remove.onclick=
+        ()=>deleteRoom(room.id);
 
+      actions.appendChild(enter);
+      actions.appendChild(edit);
+      actions.appendChild(remove);
 
-      actions.appendChild(
-        enter
-      );
-
-      actions.appendChild(
-        edit
-      );
-
-      actions.appendChild(
-        remove
-      );
-
-
-      header.appendChild(
-        name
-      );
-
-      header.appendChild(
-        actions
-      );
-
+      header.appendChild(name);
+      header.appendChild(actions);
 
       const topic =
-        document.createElement(
-          "p"
-        );
+        document.createElement("p");
 
-      topic.textContent =
+      topic.textContent=
         room.topic ||
         "Free conversation";
 
-
       const count =
-        document.createElement(
-          "div"
-        );
+        document.createElement("div");
 
-      count.className =
-        "muted";
+      count.className="muted";
+      count.style.marginTop="5px";
 
-      count.style.marginTop =
-        "5px";
-
-      count.textContent =
+      count.textContent=
         `${room.characterIds.length} character(s)`;
 
+      element.appendChild(header);
+      element.appendChild(topic);
+      element.appendChild(count);
 
-      element.appendChild(
-        header
-      );
-
-      element.appendChild(
-        topic
-      );
-
-      element.appendChild(
-        count
-      );
-
-
-      box.appendChild(
-        element
-      );
+      box.appendChild(element);
 
     }
   );
@@ -3983,42 +3311,27 @@ function renderRooms() {
 
 
 /* =========================================================
-   SELECT / DELETE ROOM
+   ROOM SELECT / DELETE
 ========================================================= */
 
-function selectRoom(
-  id
-) {
+function selectRoom(id){
 
-  simulationRunning =
-    false;
+  simulationRunning=false;
+  simulationPaused=false;
+  pendingBatch=null;
+  pendingDirectorMessage="";
 
-  simulationPaused =
-    false;
-
-  pendingBatch =
-    null;
-
-  pendingDirectorMessage =
-    "";
-
-  data.activeRoomId =
-    id;
-
+  data.activeRoomId=id;
 
   const room =
     getActiveRoom();
-
 
   data.topic =
     room?.topic ||
     "A normal day together.";
 
-
   scheduleSave();
-
   renderAll();
-
 
   const labButton =
     document.querySelector(
@@ -4033,43 +3346,464 @@ function selectRoom(
 }
 
 
-function deleteRoom(
-  id
-) {
+function deleteRoom(id){
 
-  if (
+  if(
     !confirm(
       "Delete this room?"
     )
-  ) {
-
+  ){
     return;
-
   }
-
 
   data.rooms =
     data.rooms.filter(
-      room =>
-        room.id !== id
+      room=>room.id!==id
     );
 
+  if(data.activeRoomId===id){
 
-  if (
-    data.activeRoomId ===
-    id
-  ) {
-
-    data.activeRoomId =
+    data.activeRoomId=
       data.rooms[0]?.id ||
       null;
 
   }
 
+  scheduleSave();
+  renderAll();
+
+}
+
+
+/* =========================================================
+   TEMPLATES
+========================================================= */
+
+function getAllTemplates(){
+
+  return [
+    ...BUILT_IN_TEMPLATES,
+    ...(data.templates || [])
+  ];
+
+}
+
+
+function renderTemplates(){
+
+  const box =
+    document.getElementById(
+      "templateList"
+    );
+
+  if(!box){
+    return;
+  }
+
+  box.innerHTML="";
+
+  const templates =
+    getAllTemplates();
+
+  templates.forEach(
+    template=>{
+
+      const card =
+        document.createElement("div");
+
+      card.className=
+        "template-card";
+
+      const icon =
+        document.createElement("div");
+
+      icon.className=
+        "template-icon";
+
+      icon.textContent=
+        template.icon || "🧩";
+
+      const name =
+        document.createElement("div");
+
+      name.className=
+        "template-name";
+
+      name.textContent=
+        template.name;
+
+      const description =
+        document.createElement("div");
+
+      description.className=
+        "template-description";
+
+      description.textContent=
+        template.description ||
+        "Character template.";
+
+      const traits =
+        document.createElement("div");
+
+      (template.traits || [])
+        .slice(0,5)
+        .forEach(
+          trait=>{
+
+            const badge =
+              document.createElement("span");
+
+            badge.className="badge";
+            badge.textContent=trait;
+
+            traits.appendChild(badge);
+
+          }
+        );
+
+      const actions =
+        document.createElement("div");
+
+      actions.className="row";
+      actions.style.marginTop="12px";
+
+      const use =
+        document.createElement("button");
+
+      use.className=
+        "btn primary small";
+
+      use.textContent=
+        "Use Template";
+
+      use.onclick=
+        ()=>useTemplate(template);
+
+      actions.appendChild(use);
+
+      const isCustom =
+        String(template.id)
+          .startsWith("custom_");
+
+      if(isCustom){
+
+        const edit =
+          document.createElement("button");
+
+        edit.className=
+          "btn small";
+
+        edit.textContent="Edit";
+
+        edit.onclick=
+          ()=>openTemplateModal(
+            template.id
+          );
+
+        const remove =
+          document.createElement("button");
+
+        remove.className=
+          "btn small danger";
+
+        remove.textContent="Delete";
+
+        remove.onclick=
+          ()=>deleteTemplate(
+            template.id
+          );
+
+        actions.appendChild(edit);
+        actions.appendChild(remove);
+
+      }
+
+      card.appendChild(icon);
+      card.appendChild(name);
+      card.appendChild(description);
+      card.appendChild(traits);
+      card.appendChild(actions);
+
+      box.appendChild(card);
+
+    }
+  );
+
+}
+
+
+function openTemplateModal(id=null){
+
+  document.getElementById(
+    "editingTemplateId"
+  ).value=
+    id || "";
+
+  document.getElementById(
+    "templateModalTitle"
+  ).textContent=
+    id
+      ? "Edit Template"
+      : "Create Template";
+
+  const template =
+    id
+      ? data.templates.find(
+          t=>t.id===id
+        )
+      : null;
+
+  document.getElementById(
+    "templateName"
+  ).value=
+    template?.name || "";
+
+  document.getElementById(
+    "templateIcon"
+  ).value=
+    template?.icon || "🧩";
+
+  document.getElementById(
+    "templateDescription"
+  ).value=
+    template?.description || "";
+
+  document.getElementById(
+    "templateSpeaking"
+  ).value=
+    template?.speaking || "";
+
+  document.getElementById(
+    "templateTraits"
+  ).value=
+    (template?.traits || [])
+      .join(", ");
+
+  document.getElementById(
+    "templatePersonality"
+  ).value=
+    template?.personality || "";
+
+  document.getElementById(
+    "templateMemories"
+  ).value=
+    template?.memories || "";
+
+  document.getElementById(
+    "templateModal"
+  ).classList.add("show");
+
+}
+
+
+function saveTemplate(){
+
+  const name =
+    document.getElementById(
+      "templateName"
+    ).value.trim();
+
+  if(!name){
+
+    alert(
+      "Give the template a name."
+    );
+
+    return;
+
+  }
+
+  const id =
+    document.getElementById(
+      "editingTemplateId"
+    ).value;
+
+  const template={
+
+    id:
+      id ||
+      uid("custom"),
+
+    name,
+
+    icon:
+      document.getElementById(
+        "templateIcon"
+      ).value.trim() ||
+      "🧩",
+
+    description:
+      document.getElementById(
+        "templateDescription"
+      ).value.trim(),
+
+    speaking:
+      document.getElementById(
+        "templateSpeaking"
+      ).value.trim(),
+
+    traits:
+      document.getElementById(
+        "templateTraits"
+      ).value
+        .split(",")
+        .map(
+          value=>value.trim()
+        )
+        .filter(Boolean),
+
+    personality:
+      document.getElementById(
+        "templatePersonality"
+      ).value.trim(),
+
+    memories:
+      document.getElementById(
+        "templateMemories"
+      ).value.trim()
+
+  };
+
+  const index =
+    data.templates.findIndex(
+      t=>t.id===id
+    );
+
+  if(index>=0){
+
+    data.templates[index]=
+      template;
+
+  }else{
+
+    data.templates.push(
+      template
+    );
+
+  }
+
+  scheduleSave();
+
+  closeModal(
+    "templateModal"
+  );
+
+  renderTemplates();
+
+}
+
+
+function saveCharacterAsTemplate(
+  character
+){
+
+  const template={
+
+    id:uid("custom"),
+
+    name:
+      character.name,
+
+    icon:"🧩",
+
+    description:
+      "Custom template based on "+
+      character.name+".",
+
+    speaking:
+      character.speaking || "",
+
+    traits:
+      [...(character.traits || [])],
+
+    personality:
+      character.personality || "",
+
+    memories:
+      character.memories || ""
+
+  };
+
+  data.templates.push(
+    template
+  );
+
+  scheduleSave();
+
+  renderTemplates();
+
+  alert(
+    `"${character.name}" was saved as a template.`
+  );
+
+}
+
+
+function useTemplate(
+  template
+){
+
+  const character={
+
+    id:uid("character"),
+
+    name:
+      template.name,
+
+    speaking:
+      template.speaking || "",
+
+    personality:
+      template.personality || "",
+
+    traits:
+      [...(template.traits || [])],
+
+    memories:
+      template.memories || ""
+
+  };
+
+  data.characters.push(
+    character
+  );
 
   scheduleSave();
 
   renderAll();
+
+  showPage(
+    "characters",
+    document.querySelectorAll(
+      ".nav-button"
+    )[1]
+  );
+
+  addSystemMessage(
+    `Created character "${character.name}" from the ${template.name} template.`
+  );
+
+}
+
+
+function deleteTemplate(id){
+
+  if(
+    !confirm(
+      "Delete this custom template?"
+    )
+  ){
+    return;
+  }
+
+  data.templates =
+    data.templates.filter(
+      template =>
+        template.id!==id
+    );
+
+  scheduleSave();
+  renderTemplates();
 
 }
 
@@ -4078,15 +3812,11 @@ function deleteRoom(
    MODAL
 ========================================================= */
 
-function closeModal(
-  id
-) {
+function closeModal(id){
 
   document.getElementById(
     id
-  ).classList.remove(
-    "show"
-  );
+  ).classList.remove("show");
 
 }
 
@@ -4096,6 +3826,10 @@ function closeModal(
 ========================================================= */
 
 loadLocal();
+
+if(!Array.isArray(data.templates)){
+  data.templates=[];
+}
 
 </script>
 
