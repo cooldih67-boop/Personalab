@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>PersonaLab</title>
 
 <style>
+
 * {
     box-sizing: border-box;
 }
@@ -33,8 +35,6 @@ button {
     display: flex;
     min-height: 100vh;
 }
-
-/* SIDEBAR */
 
 .sidebar {
     width: 230px;
@@ -71,8 +71,6 @@ button {
     color: white;
 }
 
-/* MAIN */
-
 .main {
     flex: 1;
     min-width: 0;
@@ -100,8 +98,6 @@ button {
     font-size: 25px;
 }
 
-/* BUTTONS */
-
 .btn {
     border: none;
     border-radius: 10px;
@@ -125,8 +121,6 @@ button {
 .btn.danger {
     background: #5a2630;
 }
-
-/* LAB */
 
 .lab {
     display: grid;
@@ -198,6 +192,12 @@ button {
     color: #62d5a5;
 }
 
+.typing {
+    color: #7f8799;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
 .director-box {
     padding: 12px;
     border-top: 1px solid #242936;
@@ -219,8 +219,6 @@ button {
 .director-box input:focus {
     border-color: #7667ff;
 }
-
-/* SIDE PANEL */
 
 .panel {
     padding: 16px;
@@ -259,8 +257,6 @@ button {
     font-size: 13px;
 }
 
-/* EVENTS */
-
 .events {
     margin-top: 15px;
 }
@@ -274,12 +270,13 @@ button {
     font-size: 13px;
 }
 
-/* CHARACTERS */
-
 .character-grid,
 .room-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    grid-template-columns: repeat(
+        auto-fill,
+        minmax(240px, 1fr)
+    );
     gap: 15px;
 }
 
@@ -327,8 +324,6 @@ button {
     color: #8e95a6;
     padding: 20px 0;
 }
-
-/* MODAL */
 
 .modal {
     position: fixed;
@@ -398,9 +393,8 @@ button {
     margin-top: 18px;
 }
 
-/* MOBILE */
-
 @media (max-width: 850px) {
+
     .app {
         display: block;
     }
@@ -442,6 +436,7 @@ button {
 }
 
 @media (max-width: 500px) {
+
     .header {
         align-items: flex-start;
         flex-direction: column;
@@ -460,6 +455,7 @@ button {
         width: 100%;
     }
 }
+
 </style>
 </head>
 
@@ -467,336 +463,372 @@ button {
 
 <div class="app">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
+<aside class="sidebar">
 
-        <div class="logo">
-            Persona<span>Lab</span>
+    <div class="logo">
+        Persona<span>Lab</span>
+    </div>
+
+    <div class="nav">
+
+        <button
+            class="nav-btn active"
+            onclick="showPage('lab', this)"
+        >
+            🧪 Lab
+        </button>
+
+        <button
+            class="nav-btn"
+            onclick="showPage('characters', this)"
+        >
+            👤 Characters
+        </button>
+
+        <button
+            class="nav-btn"
+            onclick="showPage('rooms', this)"
+        >
+            🏠 Rooms
+        </button>
+
+    </div>
+
+</aside>
+
+
+<main class="main">
+
+
+<section id="lab" class="page active">
+
+    <div class="header">
+
+        <h1>Simulation Lab</h1>
+
+        <div>
+
+            <button
+                id="generateButton"
+                class="btn primary"
+                onclick="generateTurns()"
+            >
+                Generate 20
+            </button>
+
+            <button
+                class="btn"
+                onclick="togglePause()"
+            >
+                <span id="pauseText">
+                    Pause
+                </span>
+            </button>
+
         </div>
 
-        <div class="nav">
+    </div>
 
-            <button class="nav-btn active" onclick="showPage('lab', this)">
-                🧪 Lab
+
+    <div class="lab">
+
+
+    <div class="chat-card">
+
+        <div class="chat-top">
+
+            <div class="chat-title">
+                Current Simulation
+            </div>
+
+            <div class="chat-actions">
+
+                <button
+                    class="btn"
+                    onclick="openCharacterModal()"
+                >
+                    + Character
+                </button>
+
+                <button
+                    class="btn"
+                    onclick="clearChat()"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div id="chat" class="chat"></div>
+
+
+        <div class="director-box">
+
+            <input
+                id="directorInput"
+                type="text"
+                placeholder="Give the simulation a Director instruction..."
+                onkeydown="if(event.key==='Enter') sendDirectorInstruction()"
+            >
+
+            <button
+                class="btn primary"
+                onclick="sendDirectorInstruction()"
+            >
+                Send
             </button>
 
-            <button class="nav-btn" onclick="showPage('characters', this)">
-                👤 Characters
-            </button>
+        </div>
 
-            <button class="nav-btn" onclick="showPage('rooms', this)">
-                🏠 Rooms
-            </button>
+    </div>
+
+
+    <aside class="panel">
+
+        <h3>Simulation</h3>
+
+        <div class="topic-box">
+
+            <strong>Topic</strong>
+
+            <div id="topicText">
+                Free conversation
+            </div>
+
+        </div>
+
+
+        <h3>Relationships</h3>
+
+        <div id="relationships">
+
+            <div class="empty">
+                No relationships yet.
+            </div>
+
+        </div>
+
+
+        <div class="events">
+
+            <h3>Events</h3>
+
+            <div id="events">
+
+                <div class="empty">
+                    Nothing notable yet.
+                </div>
+
+            </div>
 
         </div>
 
     </aside>
 
 
-    <!-- MAIN -->
-    <main class="main">
+    </div>
 
-        <!-- LAB PAGE -->
-        <section id="lab" class="page active">
-
-            <div class="header">
-
-                <h1>Simulation Lab</h1>
-
-                <div>
-                    <button class="btn primary" onclick="generateTurns()">
-                        Generate 20
-                    </button>
-
-                    <button class="btn" onclick="togglePause()">
-                        <span id="pauseText">Pause</span>
-                    </button>
-                </div>
-
-            </div>
+</section>
 
 
-            <div class="lab">
+<section id="characters" class="page">
 
-                <!-- CHAT -->
-                <div class="chat-card">
+    <div class="header">
 
-                    <div class="chat-top">
+        <h1>Characters</h1>
 
-                        <div class="chat-title">
-                            Current Simulation
-                        </div>
+        <button
+            class="btn primary"
+            onclick="openCharacterModal()"
+        >
+            + Create Character
+        </button>
 
-                        <div class="chat-actions">
+    </div>
 
-                            <button class="btn" onclick="openCharacterModal()">
-                                + Character
-                            </button>
+    <div
+        id="characterGrid"
+        class="character-grid"
+    ></div>
 
-                            <button class="btn" onclick="clearChat()">
-                                Clear
-                            </button>
-
-                        </div>
-
-                    </div>
+</section>
 
 
-                    <div id="chat" class="chat"></div>
+<section id="rooms" class="page">
+
+    <div class="header">
+
+        <h1>Rooms</h1>
+
+        <button
+            class="btn primary"
+            onclick="openRoomModal()"
+        >
+            + Create Room
+        </button>
+
+    </div>
+
+    <div
+        id="roomGrid"
+        class="room-grid"
+    ></div>
+
+</section>
 
 
-                    <div class="director-box">
-
-                        <input
-                            id="directorInput"
-                            type="text"
-                            placeholder="Give the simulation a Director instruction..."
-                            onkeydown="if(event.key==='Enter') sendDirectorInstruction()"
-                        >
-
-                        <button
-                            class="btn primary"
-                            onclick="sendDirectorInstruction()"
-                        >
-                            Send
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- INFO PANEL -->
-                <aside class="panel">
-
-                    <h3>Simulation</h3>
-
-                    <div class="topic-box">
-                        <strong>Topic</strong>
-                        <div id="topicText">
-                            Free conversation
-                        </div>
-                    </div>
-
-
-                    <h3>Relationships</h3>
-
-                    <div id="relationships">
-                        <div class="empty">
-                            No relationships yet.
-                        </div>
-                    </div>
-
-
-                    <div class="events">
-
-                        <h3>Events</h3>
-
-                        <div id="events">
-                            <div class="empty">
-                                Nothing notable yet.
-                            </div>
-                        </div>
-
-                    </div>
-
-                </aside>
-
-            </div>
-
-        </section>
-
-
-        <!-- CHARACTERS PAGE -->
-        <section id="characters" class="page">
-
-            <div class="header">
-
-                <h1>Characters</h1>
-
-                <button
-                    class="btn primary"
-                    onclick="openCharacterModal()"
-                >
-                    + Create Character
-                </button>
-
-            </div>
-
-
-            <div id="characterGrid" class="character-grid"></div>
-
-        </section>
-
-
-        <!-- ROOMS PAGE -->
-        <section id="rooms" class="page">
-
-            <div class="header">
-
-                <h1>Rooms</h1>
-
-                <button
-                    class="btn primary"
-                    onclick="openRoomModal()"
-                >
-                    + Create Room
-                </button>
-
-            </div>
-
-
-            <div id="roomGrid" class="room-grid"></div>
-
-        </section>
-
-    </main>
+</main>
 
 </div>
 
 
-<!-- CHARACTER MODAL -->
+<div
+    id="characterModal"
+    class="modal"
+>
 
-<div id="characterModal" class="modal">
+<div class="modal-box">
 
-    <div class="modal-box">
+    <h2>Create Character</h2>
 
-        <h2>Create Character</h2>
+    <div class="form-group">
 
-        <div class="form-group">
+        <label>Name</label>
 
-            <label>Name</label>
+        <input
+            id="characterName"
+            placeholder="Example: Alex"
+        >
 
-            <input
-                id="characterName"
-                placeholder="Example: Alex"
-            >
-
-        </div>
-
-
-        <div class="form-group">
-
-            <label>Personality</label>
-
-            <textarea
-                id="characterPersonality"
-                placeholder="Describe how they usually behave..."
-            ></textarea>
-
-        </div>
+    </div>
 
 
-        <div class="form-group">
+    <div class="form-group">
 
-            <label>Traits</label>
+        <label>Personality</label>
 
-            <input
-                id="characterTraits"
-                placeholder="funny, confident, stubborn"
-            >
+        <textarea
+            id="characterPersonality"
+            placeholder="Describe how they usually behave..."
+        ></textarea>
 
-        </div>
-
-
-        <div class="form-group">
-
-            <label>Speaking Style</label>
-
-            <textarea
-                id="characterSpeaking"
-                placeholder="Short sentences, sarcastic, formal, etc."
-            ></textarea>
-
-        </div>
+    </div>
 
 
-        <div class="form-group">
+    <div class="form-group">
 
-            <label>Starting Memories</label>
+        <label>Traits</label>
 
-            <textarea
-                id="characterMemories"
-                placeholder="Things this character remembers..."
-            ></textarea>
+        <input
+            id="characterTraits"
+            placeholder="funny, confident, stubborn"
+        >
 
-        </div>
+    </div>
 
 
-        <div class="modal-actions">
+    <div class="form-group">
 
-            <button
-                class="btn"
-                onclick="closeCharacterModal()"
-            >
-                Cancel
-            </button>
+        <label>Speaking Style</label>
 
-            <button
-                class="btn primary"
-                onclick="createCharacter()"
-            >
-                Create
-            </button>
+        <textarea
+            id="characterSpeaking"
+            placeholder="Short sentences, sarcastic, formal, etc."
+        ></textarea>
 
-        </div>
+    </div>
+
+
+    <div class="form-group">
+
+        <label>Starting Memories</label>
+
+        <textarea
+            id="characterMemories"
+            placeholder="Things this character remembers..."
+        ></textarea>
+
+    </div>
+
+
+    <div class="modal-actions">
+
+        <button
+            class="btn"
+            onclick="closeCharacterModal()"
+        >
+            Cancel
+        </button>
+
+        <button
+            class="btn primary"
+            onclick="createCharacter()"
+        >
+            Create
+        </button>
 
     </div>
 
 </div>
 
-
-<!-- ROOM MODAL -->
-
-<div id="roomModal" class="modal">
-
-    <div class="modal-box">
-
-        <h2>Create Room</h2>
-
-        <div class="form-group">
-
-            <label>Room Name</label>
-
-            <input
-                id="roomName"
-                placeholder="Example: Cafeteria"
-            >
-
-        </div>
+</div>
 
 
-        <div class="form-group">
+<div
+    id="roomModal"
+    class="modal"
+>
 
-            <label>Description</label>
+<div class="modal-box">
 
-            <textarea
-                id="roomDescription"
-                placeholder="Describe the room..."
-            ></textarea>
+    <h2>Create Room</h2>
 
-        </div>
+    <div class="form-group">
 
+        <label>Room Name</label>
 
-        <div class="modal-actions">
-
-            <button
-                class="btn"
-                onclick="closeRoomModal()"
-            >
-                Cancel
-            </button>
-
-            <button
-                class="btn primary"
-                onclick="createRoom()"
-            >
-                Create
-            </button>
-
-        </div>
+        <input
+            id="roomName"
+            placeholder="Example: Cafeteria"
+        >
 
     </div>
+
+
+    <div class="form-group">
+
+        <label>Description</label>
+
+        <textarea
+            id="roomDescription"
+            placeholder="Describe the room..."
+        ></textarea>
+
+    </div>
+
+
+    <div class="modal-actions">
+
+        <button
+            class="btn"
+            onclick="closeRoomModal()"
+        >
+            Cancel
+        </button>
+
+        <button
+            class="btn primary"
+            onclick="createRoom()"
+        >
+            Create
+        </button>
+
+    </div>
+
+</div>
 
 </div>
 
@@ -804,97 +836,99 @@ button {
 <script>
 
 /* =========================================================
-   PERSONLAB CONFIG
+   CONFIG
    ========================================================= */
-
-/*
-   YOUR SUPABASE PROJECT URL IS ALREADY HERE.
-*/
 
 const SUPABASE_URL =
     "https://riqoxjuzdjqisczezmse.supabase.co";
 
-
-/*
-   PASTE YOUR SUPABASE PUBLISHABLE / ANON KEY BETWEEN
-   THE QUOTATION MARKS BELOW.
-*/
-
 const SUPABASE_ANON_KEY =
     "sb_publishable_gbrG0FYf42bNenKMX45jLg_JJe02Gle";
 
-
-/*
-   DO NOT CHANGE THIS.
-*/
-
-const FUNCTION_NAME = "personala-ai";
+const FUNCTION_NAME =
+    "personala-ai";
 
 
 /* =========================================================
    DATA
    ========================================================= */
 
-const STORAGE_KEY = "PersonaLab_Data_V3";
+const STORAGE_KEY =
+    "PersonaLab_Data_V3";
 
+let data =
+    JSON.parse(
+        localStorage.getItem(STORAGE_KEY)
+    ) || {
 
-let data = JSON.parse(
-    localStorage.getItem(STORAGE_KEY)
-) || {
+        characters: [
 
-    characters: [
+            {
+                id: crypto.randomUUID(),
+                name: "Alex",
+                personality:
+                    "Friendly, curious, energetic and likes meeting new people.",
+                traits:
+                    ["friendly", "curious", "energetic"],
+                speaking:
+                    "Casual and upbeat.",
+                memories:
+                    "Remembers that they enjoy talking with people."
+            },
 
-        {
-            id: crypto.randomUUID(),
-            name: "Alex",
-            personality: "Friendly, curious, energetic and likes meeting new people.",
-            traits: ["friendly", "curious", "energetic"],
-            speaking: "Casual and upbeat.",
-            memories: "Remembers that they enjoy talking with people."
-        },
+            {
+                id: crypto.randomUUID(),
+                name: "Nova",
+                personality:
+                    "Smart, confident and competitive. Likes proving their point.",
+                traits:
+                    ["smart", "confident", "competitive"],
+                speaking:
+                    "Direct and confident.",
+                memories:
+                    "Remembers that they hate losing arguments."
+            },
 
-        {
-            id: crypto.randomUUID(),
-            name: "Nova",
-            personality: "Smart, confident and competitive. Likes proving their point.",
-            traits: ["smart", "confident", "competitive"],
-            speaking: "Direct and confident.",
-            memories: "Remembers that they hate losing arguments."
-        },
+            {
+                id: crypto.randomUUID(),
+                name: "Raven",
+                personality:
+                    "Quiet, observant and sarcastic. Does not trust people immediately.",
+                traits:
+                    ["quiet", "observant", "sarcastic"],
+                speaking:
+                    "Dry and sarcastic.",
+                memories:
+                    "Remembers that they usually observe before speaking."
+            }
 
-        {
-            id: crypto.randomUUID(),
-            name: "Raven",
-            personality: "Quiet, observant and sarcastic. Does not trust people immediately.",
-            traits: ["quiet", "observant", "sarcastic"],
-            speaking: "Dry and sarcastic.",
-            memories: "Remembers that they usually observe before speaking."
-        }
+        ],
 
-    ],
+        rooms: [
 
-    rooms: [
+            {
+                id: crypto.randomUUID(),
+                name: "Main Room",
+                description:
+                    "A simple room where everyone can talk."
+            }
 
-        {
-            id: crypto.randomUUID(),
-            name: "Main Room",
-            description: "A simple room where everyone can talk."
-        }
+        ],
 
-    ],
+        messages: [],
 
-    messages: [],
+        relationships: {},
 
-    relationships: {},
+        events: [],
 
-    events: [],
+        topic:
+            "Free conversation"
 
-    topic: "Free conversation"
-
-};
+    };
 
 
 let paused = false;
+
 let generating = false;
 
 
@@ -916,20 +950,37 @@ function saveData() {
    PAGE NAVIGATION
    ========================================================= */
 
-function showPage(pageId, button) {
+function showPage(
+    pageId,
+    button
+) {
 
-    document.querySelectorAll(".page").forEach(page => {
-        page.classList.remove("active");
-    });
+    document
+        .querySelectorAll(".page")
+        .forEach(page => {
+
+            page.classList.remove(
+                "active"
+            );
+
+        });
+
 
     document
         .getElementById(pageId)
         .classList.add("active");
 
 
-    document.querySelectorAll(".nav-btn").forEach(btn => {
-        btn.classList.remove("active");
-    });
+    document
+        .querySelectorAll(".nav-btn")
+        .forEach(btn => {
+
+            btn.classList.remove(
+                "active"
+            );
+
+        });
+
 
     button.classList.add("active");
 
@@ -946,12 +997,16 @@ function showPage(pageId, button) {
 
 
 /* =========================================================
-   CHAT
+   CHAT RENDER
    ========================================================= */
 
 function renderChat() {
 
-    const chat = document.getElementById("chat");
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
 
     chat.innerHTML = "";
 
@@ -961,7 +1016,8 @@ function renderChat() {
         chat.innerHTML = `
             <div class="empty">
                 The simulation hasn't started yet.
-                Press <strong>Generate 20</strong> to let the characters talk.
+                Press <strong>Generate 20</strong>
+                to let the characters talk.
             </div>
         `;
 
@@ -969,51 +1025,183 @@ function renderChat() {
     }
 
 
-    data.messages.forEach(message => {
+    data.messages.forEach(
+        message => {
 
-        const div = document.createElement("div");
+            addMessageToScreen(
+                message
+            );
 
-        div.className = "message";
-
-
-        if (message.character === "Director") {
-            div.classList.add("director");
         }
-
-        if (message.character === "System") {
-            div.classList.add("system");
-        }
+    );
 
 
-        div.innerHTML = `
-            <div class="message-name">
-                ${escapeHTML(message.character)}
-            </div>
-
-            <div class="message-text">
-                ${escapeHTML(message.message)}
-            </div>
-        `;
-
-
-        chat.appendChild(div);
-
-    });
-
-
-    chat.scrollTop = chat.scrollHeight;
+    chat.scrollTop =
+        chat.scrollHeight;
 
 }
 
 
 /* =========================================================
-   CHARACTERS
+   ADD ONE MESSAGE
+   ========================================================= */
+
+function addMessageToScreen(
+    message
+) {
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.className =
+        "message";
+
+
+    if (
+        message.character ===
+        "Director"
+    ) {
+
+        div.classList.add(
+            "director"
+        );
+
+    }
+
+
+    if (
+        message.character ===
+        "System"
+    ) {
+
+        div.classList.add(
+            "system"
+        );
+
+    }
+
+
+    div.innerHTML = `
+
+        <div class="message-name">
+            ${escapeHTML(
+                message.character
+            )}
+        </div>
+
+        <div class="message-text">
+            ${escapeHTML(
+                message.message
+            )}
+        </div>
+
+    `;
+
+
+    chat.appendChild(div);
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+/* =========================================================
+   TYPING INDICATOR
+   ========================================================= */
+
+function showTyping(
+    character
+) {
+
+    removeTyping();
+
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.id =
+        "typingIndicator";
+
+
+    div.className =
+        "typing";
+
+
+    div.textContent =
+        `${character} is typing...`;
+
+
+    chat.appendChild(div);
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+function removeTyping() {
+
+    const typing =
+        document.getElementById(
+            "typingIndicator"
+        );
+
+
+    if (typing) {
+        typing.remove();
+    }
+
+}
+
+
+/* =========================================================
+   DELAY
+   ========================================================= */
+
+function wait(ms) {
+
+    return new Promise(
+        resolve =>
+            setTimeout(
+                resolve,
+                ms
+            )
+    );
+
+}
+
+
+/* =========================================================
+   CHARACTER RENDER
    ========================================================= */
 
 function renderCharacters() {
 
     const grid =
-        document.getElementById("characterGrid");
+        document.getElementById(
+            "characterGrid"
+        );
 
 
     if (!data.characters.length) {
@@ -1031,64 +1219,83 @@ function renderCharacters() {
     grid.innerHTML = "";
 
 
-    data.characters.forEach(character => {
+    data.characters.forEach(
+        character => {
 
-        const card =
-            document.createElement("div");
-
-        card.className = "character-card";
-
-
-        const tags =
-            character.traits
-                .map(trait => `
-                    <span class="tag">
-                        ${escapeHTML(trait)}
-                    </span>
-                `)
-                .join("");
+            const card =
+                document.createElement(
+                    "div"
+                );
 
 
-        card.innerHTML = `
-
-            <div class="character-name">
-                ${escapeHTML(character.name)}
-            </div>
-
-            <div class="character-info">
-                ${escapeHTML(character.personality)}
-            </div>
-
-            <div class="tags">
-                ${tags}
-            </div>
-
-            <div class="character-info">
-                <strong>Speaking:</strong>
-                ${escapeHTML(character.speaking)}
-            </div>
-
-            <div class="character-info">
-                <strong>Memories:</strong>
-                ${escapeHTML(character.memories)}
-            </div>
-
-            <div class="card-actions">
-
-                <button
-                    class="btn danger"
-                    onclick="deleteCharacter('${character.id}')"
-                >
-                    Delete
-                </button>
-
-            </div>
-        `;
+            card.className =
+                "character-card";
 
 
-        grid.appendChild(card);
+            const tags =
+                character.traits
+                    .map(
+                        trait => `
+                            <span class="tag">
+                                ${escapeHTML(
+                                    trait
+                                )}
+                            </span>
+                        `
+                    )
+                    .join("");
 
-    });
+
+            card.innerHTML = `
+
+                <div class="character-name">
+                    ${escapeHTML(
+                        character.name
+                    )}
+                </div>
+
+                <div class="character-info">
+                    ${escapeHTML(
+                        character.personality
+                    )}
+                </div>
+
+                <div class="tags">
+                    ${tags}
+                </div>
+
+                <div class="character-info">
+                    <strong>Speaking:</strong>
+                    ${escapeHTML(
+                        character.speaking
+                    )}
+                </div>
+
+                <div class="character-info">
+                    <strong>Memories:</strong>
+                    ${escapeHTML(
+                        character.memories
+                    )}
+                </div>
+
+                <div class="card-actions">
+
+                    <button
+                        class="btn danger"
+                        onclick="deleteCharacter('${character.id}')"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
+            `;
+
+
+            grid.appendChild(card);
+
+        }
+    );
 
 }
 
@@ -1100,7 +1307,9 @@ function renderCharacters() {
 function renderRooms() {
 
     const grid =
-        document.getElementById("roomGrid");
+        document.getElementById(
+            "roomGrid"
+        );
 
 
     if (!data.rooms.length) {
@@ -1118,41 +1327,51 @@ function renderRooms() {
     grid.innerHTML = "";
 
 
-    data.rooms.forEach(room => {
+    data.rooms.forEach(
+        room => {
 
-        const card =
-            document.createElement("div");
-
-        card.className = "room-card";
-
-
-        card.innerHTML = `
-
-            <div class="room-name">
-                🏠 ${escapeHTML(room.name)}
-            </div>
-
-            <div class="room-info">
-                ${escapeHTML(room.description)}
-            </div>
-
-            <div class="card-actions">
-
-                <button
-                    class="btn danger"
-                    onclick="deleteRoom('${room.id}')"
-                >
-                    Delete
-                </button>
-
-            </div>
-
-        `;
+            const card =
+                document.createElement(
+                    "div"
+                );
 
 
-        grid.appendChild(card);
+            card.className =
+                "room-card";
 
-    });
+
+            card.innerHTML = `
+
+                <div class="room-name">
+                    🏠 ${escapeHTML(
+                        room.name
+                    )}
+                </div>
+
+                <div class="room-info">
+                    ${escapeHTML(
+                        room.description
+                    )}
+                </div>
+
+                <div class="card-actions">
+
+                    <button
+                        class="btn danger"
+                        onclick="deleteRoom('${room.id}')"
+                    >
+                        Delete
+                    </button>
+
+                </div>
+
+            `;
+
+
+            grid.appendChild(card);
+
+        }
+    );
 
 }
 
@@ -1164,7 +1383,9 @@ function renderRooms() {
 function openCharacterModal() {
 
     document
-        .getElementById("characterModal")
+        .getElementById(
+            "characterModal"
+        )
         .classList.add("show");
 
 }
@@ -1173,7 +1394,9 @@ function openCharacterModal() {
 function closeCharacterModal() {
 
     document
-        .getElementById("characterModal")
+        .getElementById(
+            "characterModal"
+        )
         .classList.remove("show");
 
 }
@@ -1183,44 +1406,58 @@ function createCharacter() {
 
     const name =
         document
-            .getElementById("characterName")
+            .getElementById(
+                "characterName"
+            )
             .value
             .trim();
 
 
     const personality =
         document
-            .getElementById("characterPersonality")
+            .getElementById(
+                "characterPersonality"
+            )
             .value
             .trim();
 
 
     const traits =
         document
-            .getElementById("characterTraits")
+            .getElementById(
+                "characterTraits"
+            )
             .value
             .split(",")
-            .map(x => x.trim())
+            .map(
+                x => x.trim()
+            )
             .filter(Boolean);
 
 
     const speaking =
         document
-            .getElementById("characterSpeaking")
+            .getElementById(
+                "characterSpeaking"
+            )
             .value
             .trim();
 
 
     const memories =
         document
-            .getElementById("characterMemories")
+            .getElementById(
+                "characterMemories"
+            )
             .value
             .trim();
 
 
     if (!name) {
 
-        alert("Give the character a name.");
+        alert(
+            "Give the character a name."
+        );
 
         return;
     }
@@ -1228,7 +1465,8 @@ function createCharacter() {
 
     data.characters.push({
 
-        id: crypto.randomUUID(),
+        id:
+            crypto.randomUUID(),
 
         name,
 
@@ -1256,11 +1494,25 @@ function createCharacter() {
     closeCharacterModal();
 
 
-    document.getElementById("characterName").value = "";
-    document.getElementById("characterPersonality").value = "";
-    document.getElementById("characterTraits").value = "";
-    document.getElementById("characterSpeaking").value = "";
-    document.getElementById("characterMemories").value = "";
+    document.getElementById(
+        "characterName"
+    ).value = "";
+
+    document.getElementById(
+        "characterPersonality"
+    ).value = "";
+
+    document.getElementById(
+        "characterTraits"
+    ).value = "";
+
+    document.getElementById(
+        "characterSpeaking"
+    ).value = "";
+
+    document.getElementById(
+        "characterMemories"
+    ).value = "";
 
 }
 
@@ -1272,7 +1524,9 @@ function createCharacter() {
 function deleteCharacter(id) {
 
     const character =
-        data.characters.find(c => c.id === id);
+        data.characters.find(
+            c => c.id === id
+        );
 
 
     if (!character) return;
@@ -1307,7 +1561,9 @@ function deleteCharacter(id) {
 function openRoomModal() {
 
     document
-        .getElementById("roomModal")
+        .getElementById(
+            "roomModal"
+        )
         .classList.add("show");
 
 }
@@ -1316,7 +1572,9 @@ function openRoomModal() {
 function closeRoomModal() {
 
     document
-        .getElementById("roomModal")
+        .getElementById(
+            "roomModal"
+        )
         .classList.remove("show");
 
 }
@@ -1326,21 +1584,27 @@ function createRoom() {
 
     const name =
         document
-            .getElementById("roomName")
+            .getElementById(
+                "roomName"
+            )
             .value
             .trim();
 
 
     const description =
         document
-            .getElementById("roomDescription")
+            .getElementById(
+                "roomDescription"
+            )
             .value
             .trim();
 
 
     if (!name) {
 
-        alert("Give the room a name.");
+        alert(
+            "Give the room a name."
+        );
 
         return;
     }
@@ -1348,7 +1612,8 @@ function createRoom() {
 
     data.rooms.push({
 
-        id: crypto.randomUUID(),
+        id:
+            crypto.randomUUID(),
 
         name,
 
@@ -1366,8 +1631,13 @@ function createRoom() {
     closeRoomModal();
 
 
-    document.getElementById("roomName").value = "";
-    document.getElementById("roomDescription").value = "";
+    document.getElementById(
+        "roomName"
+    ).value = "";
+
+    document.getElementById(
+        "roomDescription"
+    ).value = "";
 
 }
 
@@ -1379,7 +1649,9 @@ function createRoom() {
 function deleteRoom(id) {
 
     const room =
-        data.rooms.find(r => r.id === id);
+        data.rooms.find(
+            r => r.id === id
+        );
 
 
     if (!room) return;
@@ -1413,21 +1685,33 @@ function deleteRoom(id) {
 
 function togglePause() {
 
-    paused = !paused;
+    paused =
+        !paused;
 
 
-    document.getElementById("pauseText")
-        .textContent =
+    document.getElementById(
+        "pauseText"
+    ).textContent =
         paused
             ? "Resume"
             : "Pause";
 
 
-    addSystemMessage(
-        paused
-            ? "Simulation paused."
-            : "Simulation resumed."
-    );
+    if (paused) {
+
+        removeTyping();
+
+        addSystemMessage(
+            "Simulation paused."
+        );
+
+    } else {
+
+        addSystemMessage(
+            "Simulation resumed."
+        );
+
+    }
 
 }
 
@@ -1439,7 +1723,9 @@ function togglePause() {
 function sendDirectorInstruction() {
 
     const input =
-        document.getElementById("directorInput");
+        document.getElementById(
+            "directorInput"
+        );
 
 
     const instruction =
@@ -1451,9 +1737,11 @@ function sendDirectorInstruction() {
 
     data.messages.push({
 
-        character: "Director",
+        character:
+            "Director",
 
-        message: instruction
+        message:
+            instruction
 
     });
 
@@ -1461,15 +1749,22 @@ function sendDirectorInstruction() {
     input.value = "";
 
 
-    data.topic = instruction;
+    data.topic =
+        instruction;
 
 
     saveData();
 
-    renderChat();
+    addMessageToScreen({
+        character: "Director",
+        message: instruction
+    });
 
-    document.getElementById("topicText")
-        .textContent = instruction;
+
+    document.getElementById(
+        "topicText"
+    ).textContent =
+        instruction;
 
 }
 
@@ -1478,11 +1773,14 @@ function sendDirectorInstruction() {
    SYSTEM MESSAGE
    ========================================================= */
 
-function addSystemMessage(message) {
+function addSystemMessage(
+    message
+) {
 
     data.messages.push({
 
-        character: "System",
+        character:
+            "System",
 
         message
 
@@ -1491,49 +1789,28 @@ function addSystemMessage(message) {
 
     saveData();
 
-    renderChat();
+    addMessageToScreen({
+
+        character:
+            "System",
+
+        message
+
+    });
 
 }
 
 
 /* =========================================================
-   CLEAR CHAT
-   ========================================================= */
-
-function clearChat() {
-
-    if (
-        !confirm(
-            "Clear the current simulation chat?"
-        )
-    ) {
-        return;
-    }
-
-
-    data.messages = [];
-
-    data.events = [];
-
-    data.relationships = {};
-
-
-    saveData();
-
-    renderChat();
-
-    renderRelationships();
-
-    renderEvents();
-
-}
-
-
-/* =========================================================
-   GENERATE AI TURNS
+   GENERATE 20
    ========================================================= */
 
 async function generateTurns() {
+
+    if (generating) {
+        return;
+    }
+
 
     if (paused) {
 
@@ -1543,9 +1820,6 @@ async function generateTurns() {
 
         return;
     }
-
-
-    if (generating) return;
 
 
     if (!data.characters.length) {
@@ -1558,12 +1832,22 @@ async function generateTurns() {
     }
 
 
-    generating = true;
+    generating =
+        true;
 
 
-    addSystemMessage(
-        "The simulation is thinking..."
-    );
+    const generateButton =
+        document.getElementById(
+            "generateButton"
+        );
+
+
+    generateButton.disabled =
+        true;
+
+
+    generateButton.textContent =
+        "Thinking...";
 
 
     try {
@@ -1574,7 +1858,9 @@ async function generateTurns() {
 
         if (
             !result ||
-            !Array.isArray(result.turns)
+            !Array.isArray(
+                result.turns
+            )
         ) {
 
             throw new Error(
@@ -1584,46 +1870,12 @@ async function generateTurns() {
         }
 
 
-        result.turns.forEach(turn => {
-
-            if (
-                !turn ||
-                !turn.character ||
-                !turn.message
-            ) {
-                return;
-            }
-
-
-            const validCharacter =
-                data.characters.some(
-                    c =>
-                        c.name ===
-                        turn.character
-                );
-
-
-            if (!validCharacter) return;
-
-
-            data.messages.push({
-
-                character:
-                    turn.character,
-
-                message:
-                    turn.message
-
-            });
-
-        });
-
-
         /*
-          Relationship support.
+          IMPORTANT:
 
-          The Edge Function can return:
-          result.relationships
+          We process the relationship/event data
+          immediately, but reveal the dialogue
+          one message at a time.
         */
 
         if (
@@ -1639,13 +1891,6 @@ async function generateTurns() {
         }
 
 
-        /*
-          Event support.
-
-          The Edge Function can return:
-          result.events
-        */
-
         if (
             Array.isArray(
                 result.events
@@ -1659,9 +1904,112 @@ async function generateTurns() {
         }
 
 
-        saveData();
+        removeTyping();
 
-        renderChat();
+
+        /*
+          Reveal each AI message individually.
+        */
+
+        for (
+            const turn of result.turns
+        ) {
+
+            if (paused) {
+                break;
+            }
+
+
+            if (
+                !turn ||
+                !turn.character ||
+                !turn.message
+            ) {
+                continue;
+            }
+
+
+            const validCharacter =
+                data.characters.some(
+                    character =>
+                        character.name ===
+                        turn.character
+                );
+
+
+            if (!validCharacter) {
+                continue;
+            }
+
+
+            showTyping(
+                turn.character
+            );
+
+
+            /*
+              Short natural delay.
+
+              Longer messages get slightly
+              more time before appearing.
+            */
+
+            const delay =
+                Math.min(
+                    1800,
+                    Math.max(
+                        650,
+                        turn.message.length * 18
+                    )
+                );
+
+
+            await wait(delay);
+
+
+            if (paused) {
+
+                removeTyping();
+
+                break;
+
+            }
+
+
+            removeTyping();
+
+
+            const message = {
+
+                character:
+                    turn.character,
+
+                message:
+                    turn.message
+
+            };
+
+
+            data.messages.push(
+                message
+            );
+
+
+            saveData();
+
+            addMessageToScreen(
+                message
+            );
+
+
+            /*
+              Tiny gap before the next person.
+            */
+
+            await wait(250);
+
+        }
+
 
         renderRelationships();
 
@@ -1673,6 +2021,9 @@ async function generateTurns() {
         console.error(error);
 
 
+        removeTyping();
+
+
         addSystemMessage(
             "AI error: " +
             error.message
@@ -1681,13 +2032,22 @@ async function generateTurns() {
     }
 
 
-    generating = false;
+    generating =
+        false;
+
+
+    generateButton.disabled =
+        false;
+
+
+    generateButton.textContent =
+        "Generate 20";
 
 }
 
 
 /* =========================================================
-   CALL SUPABASE EDGE FUNCTION
+   CALL SUPABASE
    ========================================================= */
 
 async function callAI() {
@@ -1699,15 +2059,17 @@ async function callAI() {
     const conversation =
         data.messages
             .slice(-80)
-            .map(message => ({
+            .map(
+                message => ({
 
-                character:
-                    message.character,
+                    character:
+                        message.character,
 
-                message:
-                    message.message
+                    message:
+                        message.message
 
-            }));
+                })
+            );
 
 
     const relationships =
@@ -1721,7 +2083,8 @@ async function callAI() {
             endpoint,
             {
 
-                method: "POST",
+                method:
+                    "POST",
 
                 headers: {
 
@@ -1780,20 +2143,31 @@ async function callAI() {
    RELATIONSHIPS
    ========================================================= */
 
-function relationshipKey(from, to) {
+function relationshipKey(
+    from,
+    to
+) {
 
     return `${from}|||${to}`;
 
 }
 
 
-function getRelationship(from, to) {
+function getRelationship(
+    from,
+    to
+) {
 
     const key =
-        relationshipKey(from, to);
+        relationshipKey(
+            from,
+            to
+        );
 
 
-    if (!data.relationships[key]) {
+    if (
+        !data.relationships[key]
+    ) {
 
         data.relationships[key] = {
 
@@ -1801,11 +2175,14 @@ function getRelationship(from, to) {
 
             to,
 
-            friendship: 0,
+            friendship:
+                0,
 
-            trust: 0,
+            trust:
+                0,
 
-            tension: 0
+            tension:
+                0
 
         };
 
@@ -1817,61 +2194,71 @@ function getRelationship(from, to) {
 }
 
 
-function processRelationships(list) {
+function processRelationships(
+    list
+) {
 
-    list.forEach(rel => {
+    list.forEach(
+        rel => {
 
-        if (
-            !rel.from ||
-            !rel.to
-        ) {
-            return;
+            if (
+                !rel.from ||
+                !rel.to
+            ) {
+                return;
+            }
+
+
+            const relationship =
+                getRelationship(
+                    rel.from,
+                    rel.to
+                );
+
+
+            relationship.friendship +=
+                Number(
+                    rel.friendship
+                ) || 0;
+
+
+            relationship.trust +=
+                Number(
+                    rel.trust
+                ) || 0;
+
+
+            relationship.tension +=
+                Number(
+                    rel.tension
+                ) || 0;
+
+
+            relationship.friendship =
+                clamp(
+                    relationship.friendship,
+                    -100,
+                    100
+                );
+
+
+            relationship.trust =
+                clamp(
+                    relationship.trust,
+                    -100,
+                    100
+                );
+
+
+            relationship.tension =
+                clamp(
+                    relationship.tension,
+                    0,
+                    100
+                );
+
         }
-
-
-        const relationship =
-            getRelationship(
-                rel.from,
-                rel.to
-            );
-
-
-        relationship.friendship +=
-            Number(rel.friendship) || 0;
-
-
-        relationship.trust +=
-            Number(rel.trust) || 0;
-
-
-        relationship.tension +=
-            Number(rel.tension) || 0;
-
-
-        relationship.friendship =
-            clamp(
-                relationship.friendship,
-                -100,
-                100
-            );
-
-
-        relationship.trust =
-            clamp(
-                relationship.trust,
-                -100,
-                100
-            );
-
-
-        relationship.tension =
-            clamp(
-                relationship.tension,
-                0,
-                100
-            );
-
-    });
+    );
 
 
     saveData();
@@ -1879,30 +2266,55 @@ function processRelationships(list) {
 }
 
 
-function relationshipLabel(rel) {
+function relationshipLabel(
+    rel
+) {
 
-    if (rel.tension >= 70) {
+    if (
+        rel.tension >= 70
+    ) {
+
         return "Rivals";
+
     }
 
-    if (rel.trust <= -50) {
+
+    if (
+        rel.trust <= -50
+    ) {
+
         return "Distrustful";
+
     }
+
 
     if (
         rel.friendship >= 70 &&
         rel.trust >= 50
     ) {
+
         return "Close Friends";
+
     }
 
-    if (rel.friendship >= 35) {
+
+    if (
+        rel.friendship >= 35
+    ) {
+
         return "Friends";
+
     }
 
-    if (rel.tension >= 30) {
+
+    if (
+        rel.tension >= 30
+    ) {
+
         return "Tension";
+
     }
+
 
     return "Neutral";
 
@@ -1938,44 +2350,57 @@ function renderRelationships() {
     container.innerHTML = "";
 
 
-    list.forEach(rel => {
+    list.forEach(
+        rel => {
 
-        const div =
-            document.createElement("div");
-
-
-        div.className =
-            "relationship";
-
-
-        div.innerHTML = `
-
-            <div class="rel-names">
-                ${escapeHTML(rel.from)}
-                →
-                ${escapeHTML(rel.to)}
-            </div>
-
-            <div class="rel-stats">
-
-                ${relationshipLabel(rel)}
-                · Friendship:
-                ${rel.friendship}
-
-                · Trust:
-                ${rel.trust}
-
-                · Tension:
-                ${rel.tension}
-
-            </div>
-
-        `;
+            const div =
+                document.createElement(
+                    "div"
+                );
 
 
-        container.appendChild(div);
+            div.className =
+                "relationship";
 
-    });
+
+            div.innerHTML = `
+
+                <div class="rel-names">
+                    ${escapeHTML(
+                        rel.from
+                    )}
+                    →
+                    ${escapeHTML(
+                        rel.to
+                    )}
+                </div>
+
+                <div class="rel-stats">
+
+                    ${relationshipLabel(
+                        rel
+                    )}
+
+                    · Friendship:
+                    ${rel.friendship}
+
+                    · Trust:
+                    ${rel.trust}
+
+                    · Tension:
+                    ${rel.tension}
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
 
 }
 
@@ -1984,36 +2409,51 @@ function renderRelationships() {
    EVENTS
    ========================================================= */
 
-function processEvents(events) {
+function processEvents(
+    events
+) {
 
-    events.forEach(event => {
+    events.forEach(
+        event => {
 
-        if (!event) return;
-
-
-        const description =
-            typeof event === "string"
-                ? event
-                : event.description;
-
-
-        if (!description) return;
+            if (!event) {
+                return;
+            }
 
 
-        data.events.unshift({
+            const description =
+                typeof event ===
+                "string"
 
-            description,
+                    ? event
 
-            time:
-                new Date().toLocaleTimeString()
+                    : event.description;
 
-        });
 
-    });
+            if (!description) {
+                return;
+            }
+
+
+            data.events.unshift({
+
+                description,
+
+                time:
+                    new Date()
+                        .toLocaleTimeString()
+
+            });
+
+        }
+    );
 
 
     data.events =
-        data.events.slice(0, 20);
+        data.events.slice(
+            0,
+            20
+        );
 
 
     saveData();
@@ -2024,7 +2464,9 @@ function processEvents(events) {
 function renderEvents() {
 
     const container =
-        document.getElementById("events");
+        document.getElementById(
+            "events"
+        );
 
 
     if (!data.events.length) {
@@ -2042,23 +2484,31 @@ function renderEvents() {
     container.innerHTML = "";
 
 
-    data.events.forEach(event => {
+    data.events.forEach(
+        event => {
 
-        const div =
-            document.createElement("div");
-
-
-        div.className = "event";
-
-
-        div.innerHTML = `
-            ${escapeHTML(event.description)}
-        `;
+            const div =
+                document.createElement(
+                    "div"
+                );
 
 
-        container.appendChild(div);
+            div.className =
+                "event";
 
-    });
+
+            div.innerHTML =
+                escapeHTML(
+                    event.description
+                );
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
 
 }
 
@@ -2067,24 +2517,48 @@ function renderEvents() {
    HELPERS
    ========================================================= */
 
-function clamp(value, min, max) {
+function clamp(
+    value,
+    min,
+    max
+) {
 
     return Math.max(
         min,
-        Math.min(max, value)
+        Math.min(
+            max,
+            value
+        )
     );
 
 }
 
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
     return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+        .replaceAll(
+            "&",
+            "&amp;"
+        )
+        .replaceAll(
+            "<",
+            "&lt;"
+        )
+        .replaceAll(
+            ">",
+            "&gt;"
+        )
+        .replaceAll(
+            '"',
+            "&quot;"
+        )
+        .replaceAll(
+            "'",
+            "&#039;"
+        );
 
 }
 
@@ -2103,8 +2577,10 @@ renderRelationships();
 
 renderEvents();
 
-document.getElementById("topicText")
-    .textContent = data.topic;
+document.getElementById(
+    "topicText"
+).textContent =
+    data.topic;
 
 </script>
 
