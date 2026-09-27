@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PersonaLab</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #090b12;
+  color: white;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* SIDEBAR */
+
+.sidebar {
+  width: 250px;
+  background: #10131c;
+  border-right: 1px solid #242938;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.logo {
+  font-size: 25px;
+  font-weight: bold;
+}
+
+.logo span {
+  color: #8b7cff;
+}
+
+.subtitle {
+  color: #777f92;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.nav {
+  display: grid;
+  gap: 8px;
+}
+
+.nav button {
+  border: 0;
+  background: transparent;
+  color: #9ba3b5;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: left;
+}
+
+.nav button:hover,
+.nav button.active {
+  background: #1a1f2d;
+  color: white;
+}
+
+/* MAIN */
+
+.main {
+  flex: 1;
+  padding: 28px;
+  max-width: 1400px;
+  margin: auto;
+  width: 100%;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.topbar h1 {
+  margin: 0;
+}
+
+.topbar p {
+  color: #80899b;
+  margin: 7px 0 0;
+}
+
+.primary {
+  border: 0;
+  background: #786cff;
+  color: white;
+  padding: 11px 16px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+
+.primary:hover {
+  filter: brightness(1.1);
+}
+
+.secondary {
+  border: 1px solid #303647;
+  background: transparent;
+  color: #c2c8d5;
+  padding: 9px 12px;
+  border-radius: 9px;
+}
+
+/* CHARACTER GRID */
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 15px;
+}
+
+.card {
+  background: #11151f;
+  border: 1px solid #252b39;
+  border-radius: 15px;
+  padding: 18px;
+  min-height: 190px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 13px;
+  background: #252b3b;
+  display: grid;
+  place-items: center;
+  font-size: 21px;
+}
+
+.card h3 {
+  margin: 12px 0 5px;
+}
+
+.muted {
+  color: #828b9d;
+  font-size: 13px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.chip {
+  background: #1c2230;
+  color: #c2c8d5;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+}
+
+.actions {
+  display: flex;
+  gap: 7px;
+  margin-top: 15px;
+}
+
+/* LAB */
+
+.room {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 16px;
+}
+
+.panel {
+  background: #11151f;
+  border: 1px solid #252b39;
+  border-radius: 15px;
+  padding: 18px;
+}
+
+.chat {
+  height: 65vh;
+  min-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.message {
+  background: #1a1f2c;
+  padding: 12px 14px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  max-width: 80%;
+}
+
+.message .name {
+  color: #978cff;
+  font-size: 12px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.message.director {
+  background: #191b27;
+  border: 1px solid #34394a;
+}
+
+.composer {
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #282e3b;
+  padding-top: 12px;
+}
+
+.composer input {
+  flex: 1;
+  min-width: 0;
+  background: #0b0e15;
+  border: 1px solid #303647;
+  color: white;
+  padding: 11px;
+  border-radius: 10px;
+  outline: none;
+}
+
+.stat {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 0;
+  border-bottom: 1px solid #272d3a;
+  color: #aeb5c3;
+  font-size: 13px;
+}
+
+.control {
+  width: 100%;
+  margin-top: 8px;
+  border: 1px solid #303647;
+  background: transparent;
+  color: #bfc5d3;
+  padding: 10px;
+  border-radius: 9px;
+}
+
+.control:hover {
+  background: #1a1f2d;
+}
+
+/* MODAL */
+
+.modal-background {
+  position: fixed;
+  inset: 0;
+  background: #000b;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.modal {
+  width: min(550px, 100%);
+  background: #11151f;
+  border: 1px solid #303647;
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0;
+}
+
+.field label {
+  font-size: 12px;
+  color: #9ba3b5;
+}
+
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  background: #090c13;
+  border: 1px solid #303647;
+  color: white;
+  padding: 10px;
+  border-radius: 9px;
+  outline: none;
+}
+
+.field textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.empty {
+  border: 1px dashed #303647;
+  border-radius: 14px;
+  padding: 45px;
+  text-align: center;
+  color: #7e8798;
+}
+
+/* MOBILE */
+
+@media (max-width: 800px) {
+
+  .sidebar {
+    width: 70px;
+    padding: 15px 9px;
+  }
+
+  .logo {
+    font-size: 0;
+    text-align: center;
+  }
+
+  .logo::after {
+    content: "🧪";
+    font-size: 24px;
+  }
+
+  .subtitle {
+    display: none;
+  }
+
+  .nav button {
+    text-align: center;
+    font-size: 18px;
+  }
+
+  .nav button span {
+    display: none;
+  }
+
+  .main {
+    padding: 17px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .topbar h1 {
+    font-size: 23px;
+  }
+
+  .room {
+    grid-template-columns: 1fr;
+  }
+
+  .chat {
+    min-height: 60vh;
+  }
+
+  .message {
+    max-width: 92%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+  <div>
+    <div class="logo">
+      Persona<span>Lab</span>
+    </div>
+
+    <div class="subtitle">
+      AI personality simulator
+    </div>
+  </div>
+
+  <div class="nav">
+
+    <button class="active" onclick="showPage('characters', this)">
+      🧠 <span>Characters</span>
+    </button>
+
+    <button onclick="showPage('lab', this)">
+      🧪 <span>Lab</span>
+    </button>
+
+    <button onclick="showPage('rooms', this)">
+      💬 <span>Rooms</span>
+    </button>
+
+  </div>
+
+</aside>
+
+
+<!-- MAIN -->
+
+<main class="main">
+
+<!-- CHARACTERS -->
+
+<section id="characters">
+
+  <div class="topbar">
+
+    <div>
+      <h1>Characters</h1>
+      <p>Create personalities for your simulation.</p>
+    </div>
+
+    <button class="primary" onclick="openCharacterModal()">
+      + Create AI
+    </button>
+
+  </div>
+
+  <div id="characterGrid" class="grid"></div>
+
+</section>
+
+
+<!-- LAB -->
+
+<section id="lab" class="hidden">
+
+  <div class="topbar">
+
+    <div>
+      <h1>PersonaLab</h1>
+      <p>Watch your personalities interact.</p>
+    </div>
+
+    <button class="primary" onclick="toggleSimulation()">
+      <span id="simulationButton">▶ Start</span>
+    </button>
+
+  </div>
+
+
+  <div class="room">
+
+    <div class="panel chat">
+
+      <div id="messages" class="messages"></div>
+
+      <div class="composer">
+
+        <input
+          id="directorInput"
+          placeholder="Send something as the Director..."
+        >
+
+        <button class="primary" onclick="directorMessage()">
+          Send
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="panel">
+
+      <h3>Experiment</h3>
+
+      <div class="stat">
+        <span>Characters</span>
+        <b id="characterCount">0</b>
+      </div>
+
+      <div class="stat">
+        <span>Status</span>
+        <b id="simulationStatus">Paused</b>
+      </div>
+
+      <div class="stat">
+        <span>Messages</span>
+        <b id="messageCount">0</b>
+      </div>
+
+      <br>
+
+      <h3>Director Controls</h3>
+
+      <button class="control" onclick="randomEvent()">
+        🎲 Random Event
+      </button>
+
+      <button class="control" onclick="clearMessages()">
+        🧹 Clear Chat
+      </button>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ROOMS -->
+
+<section id="rooms" class="hidden">
+
+  <div class="topbar">
+
+    <div>
+      <h1>Rooms</h1>
+      <p>Different experiments can have different conversations.</p>
+    </div>
+
+    <button class="primary" onclick="createRoom()">
+      + New Room
+    </button>
+
+  </div>
+
+  <div id="roomGrid" class="grid"></div>
+
+</section>
+
+</main>
+
+</div>
+
+
+<!-- CHARACTER MODAL -->
+
+<div id="modalBackground" class="modal-background">
+
+  <div class="modal">
+
+    <h2 id="modalTitle">
+      Create AI
+    </h2>
+
+    <input
+      type="hidden"
+      id="editingCharacter"
+    >
+
+    <div class="field">
+
+      <label>Name</label>
+
+      <input
+        id="characterName"
+        placeholder="Example: Alex"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>Personality</label>
+
+      <textarea
+        id="characterPersonality"
+        placeholder="Logical, curious, sarcastic..."
+      ></textarea>
+
+    </div>
+
+
+    <div class="field">
+
+      <label>Traits</label>
+
+      <input
+        id="characterTraits"
+        placeholder="Curious, confident, calm"
+      >
+
+    </div>
+
+
+    <div class="field">
+
+      <label>Speaking Style</label>
+
+      <select id="characterStyle">
+
+        <option>Natural</option>
+        <option>Short and direct</option>
+        <option>Detailed</option>
+        <option>Funny</option>
+        <option>Formal</option>
+
+      </select>
+
+    </div>
+
+
+    <div class="modal-buttons">
+
+      <button class="secondary" onclick="closeCharacterModal()">
+        Cancel
+      </button>
+
+      <button class="primary" onclick="saveCharacter()">
+        Save AI
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   PERSONA LAB DATA
+========================================= */
+
+const STORAGE_KEY = "PersonaLab_Data";
+
+
+let data =
+  JSON.parse(localStorage.getItem(STORAGE_KEY)) ||
+  {
+
+    characters: [
+
+      {
+        id: 1,
+        name: "Alex",
+        personality: "Logical, calm, skeptical",
+        traits: ["Logical", "Curious"],
+        style: "Short and direct"
+      },
+
+      {
+        id: 2,
+        name: "Nova",
+        personality: "Creative, friendly, optimistic",
+        traits: ["Creative", "Friendly"],
+        style: "Natural"
+      },
+
+      {
+        id: 3,
+        name: "Raven",
+        personality: "Competitive, confident, argumentative",
+        traits: ["Competitive", "Confident"],
+        style: "Short and direct"
+      }
+
+    ],
+
+    rooms: [
+
+      {
+        id: 1,
+        name: "Main Experiment",
+        messages: []
+      }
+
+    ],
+
+    activeRoom: 1,
+
+    running: false
+
+  };
+
+
+let simulationTimer = null;
+
+
+/* =========================================
+   SAVE
+========================================= */
+
+function saveData() {
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
+
+}
+
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHTML(value) {
+
+  return String(value).replace(
+    /[&<>"']/g,
+
+    character => ({
+
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+
+    }[character])
+
+  );
+
+}
+
+
+/* =========================================
+   CURRENT ROOM
+========================================= */
+
+function getRoom() {
+
+  return data.rooms.find(
+    room => room.id === data.activeRoom
+  );
+
+}
+
+
+/* =========================================
+   RENDER EVERYTHING
+========================================= */
+
+function render() {
+
+  renderCharacters();
+
+  renderMessages();
+
+  renderRooms();
+
+  updateStats();
+
+}
+
+
+/* =========================================
+   CHARACTERS
+========================================= */
+
+function renderCharacters() {
+
+  const grid =
+    document.getElementById("characterGrid");
+
+
+  if (data.characters.length === 0) {
+
+    grid.innerHTML =
+      `<div class="empty">
+        No AIs yet. Create your first personality.
+      </div>`;
+
+    return;
+
+  }
+
+
+  grid.innerHTML =
+    data.characters.map(character => {
+
+      const traits =
+        character.traits
+          .map(
+            trait =>
+              `<span class="chip">
+                ${escapeHTML(trait)}
+              </span>`
+          )
+          .join("");
+
+
+      return `
+
+        <div class="card">
+
+          <div>
+
+            <div class="avatar">
+              ${escapeHTML(character.name.charAt(0))}
+            </div>
+
+            <h3>
+              ${escapeHTML(character.name)}
+            </h3>
+
+            <div class="muted">
+              ${escapeHTML(character.personality)}
+            </div>
+
+            <div class="chips">
+              ${traits}
+            </div>
+
+          </div>
+
+          <div class="actions">
+
+            <button
+              class="secondary"
+              onclick="editCharacter(${character.id})"
+            >
+              Edit
+            </button>
+
+            <button
+              class="secondary"
+              onclick="deleteCharacter(${character.id})"
+            >
+              Delete
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================================
+   CHARACTER MODAL
+========================================= */
+
+function openCharacterModal() {
+
+  document.getElementById(
+    "editingCharacter"
+  ).value = "";
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent = "Create AI";
+
+  document.getElementById(
+    "characterName"
+  ).value = "";
+
+  document.getElementById(
+    "characterPersonality"
+  ).value = "";
+
+  document.getElementById(
+    "characterTraits"
+  ).value = "";
+
+  document.getElementById(
+    "characterStyle"
+  ).value = "Natural";
+
+  document.getElementById(
+    "modalBackground"
+  ).style.display = "flex";
+
+}
+
+
+function closeCharacterModal() {
+
+  document.getElementById(
+    "modalBackground"
+  ).style.display = "none";
+
+}
+
+
+function editCharacter(id) {
+
+  const character =
+    data.characters.find(
+      character => character.id === id
+    );
+
+  if (!character) return;
+
+
+  document.getElementById(
+    "editingCharacter"
+  ).value = id;
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent = "Edit AI";
+
+  document.getElementById(
+    "characterName"
+  ).value = character.name;
+
+  document.getElementById(
+    "characterPersonality"
+  ).value = character.personality;
+
+  document.getElementById(
+    "characterTraits"
+  ).value =
+    character.traits.join(", ");
+
+  document.getElementById(
+    "characterStyle"
+  ).value = character.style;
+
+
+  document.getElementById(
+    "modalBackground"
+  ).style.display = "flex";
+
+}
+
+
+function saveCharacter() {
+
+  const editId =
+    document.getElementById(
+      "editingCharacter"
+    ).value;
+
+
+  const character = {
+
+    id: editId
+      ? Number(editId)
+      : Date.now(),
+
+    name:
+      document.getElementById(
+        "characterName"
+      ).value.trim() || "Unnamed AI",
+
+    personality:
+      document.getElementById(
+        "characterPersonality"
+      ).value.trim() ||
+      "Curious and thoughtful",
+
+    traits:
+      document.getElementById(
+        "characterTraits"
+      ).value
+        .split(",")
+        .map(trait => trait.trim())
+        .filter(Boolean),
+
+    style:
+      document.getElementById(
+        "characterStyle"
+      ).value
+
+  };
+
+
+  if (editId) {
+
+    data.characters =
+      data.characters.map(
+        oldCharacter =>
+          oldCharacter.id === Number(editId)
+            ? character
+            : oldCharacter
+      );
+
+  } else {
+
+    data.characters.push(character);
+
+  }
+
+
+  saveData();
+
+  closeCharacterModal();
+
+  render();
+
+}
+
+
+function deleteCharacter(id) {
+
+  const character =
+    data.characters.find(
+      character => character.id === id
+    );
+
+
+  if (!character) return;
+
+
+  if (
+    confirm(
+      `Delete ${character.name}?`
+    )
+  ) {
+
+    data.characters =
+      data.characters.filter(
+        character => character.id !== id
+      );
+
+    saveData();
+
+    render();
+
+  }
+
+}
+
+
+/* =========================================
+   PAGES
+========================================= */
+
+function showPage(page, button) {
+
+  document
+    .querySelectorAll("main section")
+    .forEach(section =>
+      section.classList.add("hidden")
+    );
+
+
+  document
+    .getElementById(page)
+    .classList.remove("hidden");
+
+
+  document
+    .querySelectorAll(".nav button")
+    .forEach(button =>
+      button.classList.remove("active")
+    );
+
+
+  button.classList.add("active");
+
+}
+
+
+/* =========================================
+   MESSAGES
+========================================= */
+
+function addMessage(name, text) {
+
+  const room = getRoom();
+
+  if (!room) return;
+
+
+  room.messages.push({
+
+    name: name,
+
+    text: text,
+
+    time: Date.now()
+
+  });
+
+
+  saveData();
+
+  renderMessages();
+
+  updateStats();
+
+}
+
+
+function renderMessages() {
+
+  const container =
+    document.getElementById("messages");
+
+
+  const room = getRoom();
+
+
+  if (!room || room.messages.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">
+        Start a simulation to see your personalities interact.
+      </div>`;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    room.messages.map(message => {
+
+      const director =
+        message.name === "Director";
+
+
+      return `
+
+        <div class="message ${director ? "director" : ""}">
+
+          <div class="name">
+            ${escapeHTML(message.name)}
+          </div>
+
+          ${escapeHTML(message.text)}
+
+        </div>
+
+      `;
+
+    }).join("");
+
+
+  container.scrollTop =
+    container.scrollHeight;
+
+}
+
+
+/* =========================================
+   SIMULATION
+========================================= */
+
+function toggleSimulation() {
+
+  if (data.characters.length < 2) {
+
+    alert(
+      "You need at least 2 AIs to start a simulation."
+    );
+
+    return;
+
+  }
+
+
+  data.running =
+    !data.running;
+
+
+  if (data.running) {
+
+    document.getElementById(
+      "simulationButton"
+    ).textContent = "⏸ Pause";
+
+    runSimulation();
+
+  } else {
+
+    document.getElementById(
+      "simulationButton"
+    ).textContent = "▶ Start";
+
+    clearTimeout(simulationTimer);
+
+  }
+
+
+  saveData();
+
+  updateStats();
+
+}
+
+
+function runSimulation() {
+
+  if (!data.running) return;
+
+
+  const characters =
+    data.characters;
+
+
+  const character =
+    characters[
+      Math.floor(
+        Math.random() *
+        characters.length
+      )
+    ];
+
+
+  const responses = [
+
+    "I think we should look at this from another perspective.",
+
+    "I'm not completely convinced by that idea.",
+
+    "That's actually an interesting point.",
+
+    "Wait, I think I have another way of looking at this.",
+
+    "We should probably consider what happens next.",
+
+    "I disagree, but I understand where you're coming from.",
+
+    "That raises an interesting question.",
+
+    "Let's slow down and think about this.",
+
+    "I have a feeling we're missing something.",
+
+    "Okay, but what would happen if we changed one thing?"
+
+  ];
+
+
+  const response =
+    responses[
+      Math.floor(
+        Math.random() *
+        responses.length
+      )
+    ];
+
+
+  addMessage(
+    character.name,
+    response
+  );
+
+
+  simulationTimer =
+    setTimeout(
+      runSimulation,
+      1800
+    );
+
+}
+
+
+/* =========================================
+   DIRECTOR
+========================================= */
+
+function directorMessage() {
+
+  const input =
+    document.getElementById(
+      "directorInput"
+    );
+
+
+  const text =
+    input.value.trim();
+
+
+  if (!text) return;
+
+
+  addMessage(
+    "Director",
+    text
+  );
+
+
+  input.value = "";
+
+}
+
+
+document
+  .getElementById("directorInput")
+  .addEventListener(
+    "keydown",
+    event => {
+
+      if (event.key === "Enter") {
+
+        directorMessage();
+
+      }
+
+    }
+  );
+
+
+/* =========================================
+   RANDOM EVENTS
+========================================= */
+
+function randomEvent() {
+
+  const events = [
+
+    "⚡ A surprising piece of information appeared.",
+
+    "⚡ The topic suddenly changed.",
+
+    "⚡ Someone challenged the group's previous idea.",
+
+    "⚡ A new question was introduced.",
+
+    "⚡ Everyone was asked to reconsider their position.",
+
+    "⚡ Something unexpected happened in the simulation."
+
+  ];
+
+
+  addMessage(
+    "System",
+    events[
+      Math.floor(
+        Math.random() *
+        events.length
+      )
+    ]
+  );
+
+}
+
+
+/* =========================================
+   CLEAR CHAT
+========================================= */
+
+function clearMessages() {
+
+  const room =
+    getRoom();
+
+
+  if (!room) return;
+
+
+  if (
+    confirm(
+      "Clear this room's conversation?"
+    )
+  ) {
+
+    room.messages = [];
+
+    data.running = false;
+
+    clearTimeout(simulationTimer);
+
+    saveData();
+
+    render();
+
+  }
+
+}
+
+
+/* =========================================
+   ROOMS
+========================================= */
+
+function renderRooms() {
+
+  const grid =
+    document.getElementById(
+      "roomGrid"
+    );
+
+
+  grid.innerHTML =
+    data.rooms.map(room => {
+
+      return `
+
+        <div class="card">
+
+          <div>
+
+            <div class="avatar">
+              💬
+            </div>
+
+            <h3>
+              ${escapeHTML(room.name)}
+            </h3>
+
+            <div class="muted">
+              ${room.messages.length}
+              messages
+            </div>
+
+          </div>
+
+          <div class="actions">
+
+            <button
+              class="primary"
+              onclick="openRoom(${room.id})"
+            >
+              Open
+            </button>
+
+          </div>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+
+function createRoom() {
+
+  const name =
+    prompt(
+      "What should this room be called?",
+      "New Experiment"
+    );
+
+
+  if (!name) return;
+
+
+  const room = {
+
+    id: Date.now(),
+
+    name: name,
+
+    messages: []
+
+  };
+
+
+  data.rooms.push(room);
+
+  data.activeRoom =
+    room.id;
+
+
+  saveData();
+
+  render();
+
+}
+
+
+function openRoom(id) {
+
+  data.activeRoom =
+    id;
+
+  data.running =
+    false;
+
+  clearTimeout(simulationTimer);
+
+  saveData();
+
+  showPage(
+    "lab",
+    document.querySelectorAll(
+      ".nav button"
+    )[1]
+  );
+
+  render();
+
+}
+
+
+/* =========================================
+   STATS
+========================================= */
+
+function updateStats() {
+
+  const room =
+    getRoom();
+
+
+  document.getElementById(
+    "characterCount"
+  ).textContent =
+    data.characters.length;
+
+
+  document.getElementById(
+    "simulationStatus"
+  ).textContent =
+    data.running
+      ? "Running"
+      : "Paused";
+
+
+  document.getElementById(
+    "messageCount"
+  ).textContent =
+    room
+      ? room.messages.length
+      : 0;
+
+}
+
+
+/* =========================================
+   START
+========================================= */
+
+render();
+
+</script>
+
+</body>
+</html>
