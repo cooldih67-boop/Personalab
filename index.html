@@ -2,833 +2,1172 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>PersonaLab</title>
 
-<style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+<style>
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  background: #08090d;
+  color: #f5f5f7;
 }
 
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #0b0d12;
-    color: #f5f5f5;
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 button,
 input,
 textarea,
 select {
-    font: inherit;
+  font: inherit;
 }
 
 button {
-    cursor: pointer;
+  cursor: pointer;
 }
+
+.hidden {
+  display: none !important;
+}
+
+/* =========================
+   AUTH
+========================= */
+
+.auth-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background:
+    radial-gradient(circle at top, #181c29 0, #08090d 45%);
+}
+
+.auth-box {
+  width: min(440px, 100%);
+  background: #10131a;
+  border: 1px solid #292e3a;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 20px 70px #0008;
+}
+
+.auth-logo {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  margin-bottom: 6px;
+}
+
+.auth-logo span {
+  opacity: .4;
+}
+
+.auth-subtitle {
+  color: #9298a5;
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.auth-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.auth-message {
+  color: #9da4b2;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 13px;
+}
+
+/* =========================
+   APP
+========================= */
 
 .app {
-    display: flex;
-    min-height: 100vh;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.sidebar {
-    width: 230px;
-    background: #11141b;
-    border-right: 1px solid #242936;
-    padding: 20px;
-    flex-shrink: 0;
+.topbar {
+  height: 64px;
+  background: #0c0e14;
+  border-bottom: 1px solid #20242e;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 20;
 }
 
 .logo {
-    font-size: 25px;
-    font-weight: bold;
-    margin-bottom: 30px;
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: -.5px;
 }
 
 .logo span {
-    color: #8b7cff;
+  opacity: .4;
 }
 
-.nav-btn {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: #aeb4c3;
-    padding: 13px;
-    text-align: left;
-    border-radius: 10px;
-    margin-bottom: 8px;
+.top-status {
+  color: #8e95a3;
+  font-size: 12px;
 }
 
-.nav-btn:hover,
-.nav-btn.active {
-    background: #1c2030;
-    color: white;
+.spacer {
+  flex: 1;
 }
 
-.main {
-    flex: 1;
-    min-width: 0;
-    padding: 20px;
+/* =========================
+   LAYOUT
+========================= */
+
+.layout {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr) 280px;
+  min-height: calc(100vh - 64px);
 }
+
+.sidebar {
+  background: #0b0d12;
+  border-right: 1px solid #20242e;
+  padding: 14px;
+}
+
+.nav-button {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: #aeb4c0;
+  border-radius: 10px;
+  padding: 11px 12px;
+  margin-bottom: 5px;
+}
+
+.nav-button:hover,
+.nav-button.active {
+  background: #171a22;
+  color: #fff;
+}
+
+main {
+  min-width: 0;
+  padding: 18px;
+}
+
+.right-sidebar {
+  background: #0b0d12;
+  border-left: 1px solid #20242e;
+  padding: 15px;
+}
+
+/* =========================
+   PAGES
+========================= */
 
 .page {
-    display: none;
+  display: none;
+  max-width: 1100px;
+  width: 100%;
+  margin: auto;
 }
 
 .page.active {
-    display: block;
+  display: block;
 }
 
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+.title {
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: -.7px;
+  margin-bottom: 4px;
 }
 
-.header h1 {
-    margin: 0;
-    font-size: 25px;
+.subtitle {
+  color: #9298a5;
+  font-size: 13px;
+  margin-bottom: 18px;
 }
+
+/* =========================
+   CARDS
+========================= */
+
+.card {
+  background: #10131a;
+  border: 1px solid #242934;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 14px;
+}
+
+.card-title {
+  font-weight: 800;
+}
+
+.card-subtitle {
+  color: #858c9a;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.muted {
+  color: #7f8694;
+  font-size: 12px;
+}
+
+/* =========================
+   BUTTONS
+========================= */
 
 .btn {
-    border: none;
-    border-radius: 10px;
-    padding: 10px 15px;
-    background: #272d3d;
-    color: white;
+  border: 1px solid #303541;
+  background: #151821;
+  color: #fff;
+  border-radius: 10px;
+  padding: 9px 13px;
+  transition: .15s;
 }
 
 .btn:hover {
-    background: #333b50;
+  background: #1d212c;
 }
 
 .btn.primary {
-    background: #7667ff;
-}
-
-.btn.primary:hover {
-    background: #887bff;
+  background: #fff;
+  color: #08090d;
+  border-color: #fff;
+  font-weight: 800;
 }
 
 .btn.danger {
-    background: #5a2630;
+  color: #ffb9c0;
+  border-color: #5a2931;
 }
 
-.lab {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 280px;
-    gap: 20px;
+.btn.small {
+  padding: 7px 10px;
+  font-size: 12px;
 }
 
-.chat-card,
-.panel,
-.character-card,
-.room-card {
-    background: #11141b;
-    border: 1px solid #242936;
-    border-radius: 15px;
+/* =========================
+   FORMS
+========================= */
+
+label {
+  display: block;
+  color: #aeb4c0;
+  font-size: 12px;
+  margin-bottom: 6px;
 }
 
-.chat-card {
-    display: flex;
-    flex-direction: column;
-    min-height: 650px;
-    overflow: hidden;
+input,
+textarea,
+select {
+  width: 100%;
+  background: #0b0d12;
+  border: 1px solid #2a2f3b;
+  border-radius: 10px;
+  color: #fff;
+  padding: 10px;
+  outline: none;
 }
 
-.chat-top {
-    padding: 15px;
-    border-bottom: 1px solid #242936;
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: wrap;
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: #737b8d;
 }
 
-.chat-title {
-    font-weight: bold;
+textarea {
+  min-height: 95px;
+  resize: vertical;
 }
 
-.chat-actions {
-    display: flex;
-    gap: 7px;
-    flex-wrap: wrap;
-}
+/* =========================
+   CHAT
+========================= */
 
 .chat {
-    flex: 1;
-    overflow-y: auto;
-    padding: 18px;
+  height: 57vh;
+  min-height: 400px;
+  overflow-y: auto;
+  padding: 4px;
+  scroll-behavior: smooth;
 }
 
 .message {
-    margin-bottom: 15px;
+  background: #151821;
+  border: 1px solid #232733;
+  border-radius: 11px;
+  padding: 9px 10px;
+  margin: 7px 0;
+}
+
+.message.director {
+  background: #1c1f28;
+  border-color: #565d6d;
 }
 
 .message-name {
-    font-weight: bold;
-    margin-bottom: 4px;
+  color: #bfc5d1;
+  font-size: 11px;
+  font-weight: 850;
+  margin-bottom: 3px;
 }
 
 .message-text {
-    color: #d4d8e2;
-    line-height: 1.5;
+  color: #f2f3f5;
+  font-size: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
 }
 
-.message.director .message-name {
-    color: #8b7cff;
-}
-
-.message.system .message-name {
-    color: #62d5a5;
+.system-message {
+  color: #747b89;
+  text-align: center;
+  font-size: 11px;
+  padding: 8px;
 }
 
 .typing {
-    color: #7f8799;
-    font-style: italic;
-    margin-bottom: 15px;
+  color: #8c93a1;
+  font-size: 12px;
+  padding: 8px 10px;
 }
 
-.director-box {
-    padding: 12px;
-    border-top: 1px solid #242936;
-    display: flex;
-    gap: 8px;
+.director-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
 }
 
-.director-box input {
-    flex: 1;
-    min-width: 0;
-    background: #181c25;
-    border: 1px solid #2b3140;
-    color: white;
-    border-radius: 10px;
-    padding: 12px;
-    outline: none;
+.director-bar input {
+  flex: 1;
 }
 
-.director-box input:focus {
-    border-color: #7667ff;
+/* =========================
+   LISTS
+========================= */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
 }
 
-.panel {
-    padding: 16px;
-    height: fit-content;
+.list-item {
+  background: #12151c;
+  border: 1px solid #242934;
+  border-radius: 11px;
+  padding: 12px;
 }
 
-.panel h3 {
-    margin-top: 0;
+.list-item strong {
+  display: block;
 }
 
-.topic-box {
-    background: #181c25;
-    border-radius: 10px;
-    padding: 12px;
-    color: #c5cad5;
-    line-height: 1.4;
-    margin-bottom: 15px;
+.list-item p {
+  color: #9298a5;
+  font-size: 12px;
+  line-height: 1.4;
+  margin: 6px 0 0;
 }
+
+.badge {
+  display: inline-block;
+  background: #1d212b;
+  color: #bdc3ce;
+  border-radius: 999px;
+  font-size: 10px;
+  padding: 3px 7px;
+  margin: 3px 3px 0 0;
+}
+
+/* =========================
+   RIGHT PANEL
+========================= */
 
 .relationship {
-    padding: 10px 0;
-    border-bottom: 1px solid #242936;
-}
-
-.relationship:last-child {
-    border-bottom: none;
-}
-
-.rel-names {
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.rel-stats {
-    color: #9299aa;
-    font-size: 13px;
-}
-
-.events {
-    margin-top: 15px;
+  font-size: 12px;
+  color: #b4bac6;
+  padding: 8px 0;
+  border-bottom: 1px solid #20242d;
 }
 
 .event {
-    background: #181c25;
-    border-radius: 9px;
-    padding: 10px;
-    margin-bottom: 8px;
-    color: #cbd0dc;
-    font-size: 13px;
+  font-size: 12px;
+  color: #aeb4c0;
+  padding: 8px 0;
+  border-bottom: 1px solid #20242d;
 }
 
-.character-grid,
-.room-grid {
-    display: grid;
-    grid-template-columns: repeat(
-        auto-fill,
-        minmax(240px, 1fr)
-    );
-    gap: 15px;
-}
-
-.character-card,
-.room-card {
-    padding: 16px;
-}
-
-.character-name,
-.room-name {
-    font-size: 19px;
-    font-weight: bold;
-    margin-bottom: 8px;
-}
-
-.character-info,
-.room-info {
-    color: #9fa6b6;
-    line-height: 1.5;
-    font-size: 14px;
-}
-
-.tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 10px 0;
-}
-
-.tag {
-    background: #252b3a;
-    color: #cdd2df;
-    padding: 5px 8px;
-    border-radius: 20px;
-    font-size: 12px;
-}
-
-.card-actions {
-    display: flex;
-    gap: 7px;
-    margin-top: 13px;
-}
-
-.empty {
-    color: #8e95a6;
-    padding: 20px 0;
-}
+/* =========================
+   MODALS
+========================= */
 
 .modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    padding: 15px;
-    z-index: 100;
+  position: fixed;
+  inset: 0;
+  background: #000b;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 100;
 }
 
 .modal.show {
-    display: flex;
+  display: flex;
 }
 
 .modal-box {
-    width: min(600px, 100%);
-    max-height: 90vh;
-    overflow-y: auto;
-    background: #11141b;
-    border: 1px solid #292f3c;
-    border-radius: 16px;
-    padding: 20px;
+  width: min(570px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #10131a;
+  border: 1px solid #2a2f3b;
+  border-radius: 17px;
+  padding: 18px;
 }
 
-.modal-box h2 {
-    margin-top: 0;
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 70px minmax(0, 1fr);
+  }
+
+  .right-sidebar {
+    display: none;
+  }
+
+  .sidebar {
+    padding: 8px 6px;
+  }
+
+  .nav-button {
+    text-align: center;
+    font-size: 0;
+    padding: 12px 5px;
+  }
+
+  .nav-button:first-letter {
+    font-size: 19px;
+  }
+
+  main {
+    padding: 12px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.form-group {
-    margin-bottom: 14px;
-}
+@media (max-width: 520px) {
+  .topbar {
+    height: 58px;
+    padding: 0 10px;
+  }
 
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    color: #c5cad5;
-}
+  .top-status {
+    display: none;
+  }
 
-.form-group input,
-.form-group textarea,
-.form-group select {
+  .layout {
+    min-height: calc(100vh - 58px);
+  }
+
+  .title {
+    font-size: 23px;
+  }
+
+  .chat {
+    min-height: 350px;
+    height: 57vh;
+  }
+
+  .director-bar {
+    flex-direction: column;
+  }
+
+  .director-bar .btn {
     width: 100%;
-    background: #181c25;
-    border: 1px solid #2b3140;
-    color: white;
-    border-radius: 9px;
-    padding: 11px;
-    outline: none;
+  }
 }
-
-.form-group textarea {
-    min-height: 90px;
-    resize: vertical;
-}
-
-.form-group input:focus,
-.form-group textarea:focus {
-    border-color: #7667ff;
-}
-
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 18px;
-}
-
-@media (max-width: 850px) {
-
-    .app {
-        display: block;
-    }
-
-    .sidebar {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #242936;
-        padding: 12px;
-    }
-
-    .logo {
-        margin-bottom: 10px;
-    }
-
-    .nav {
-        display: flex;
-        gap: 7px;
-        overflow-x: auto;
-    }
-
-    .nav-btn {
-        width: auto;
-        white-space: nowrap;
-        margin: 0;
-    }
-
-    .main {
-        padding: 12px;
-    }
-
-    .lab {
-        grid-template-columns: 1fr;
-    }
-
-    .chat-card {
-        min-height: 600px;
-    }
-}
-
-@media (max-width: 500px) {
-
-    .header {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .chat-top {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .director-box {
-        flex-direction: column;
-    }
-
-    .director-box button {
-        width: 100%;
-    }
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="app">
+<!-- =========================
+     AUTH SCREEN
+========================= -->
 
-<aside class="sidebar">
+<div id="authScreen" class="auth-screen">
+
+  <div class="auth-box">
+
+    <div class="auth-logo">
+      Persona<span>Lab</span>
+    </div>
+
+    <div class="auth-subtitle">
+      Create personalities, put them together, and watch the
+      simulation develop on its own.
+    </div>
+
+    <div>
+      <label>Email</label>
+      <input
+        id="authEmail"
+        type="email"
+        autocomplete="email"
+        placeholder="you@example.com"
+      >
+    </div>
+
+    <div style="margin-top:10px">
+      <label>Password</label>
+      <input
+        id="authPassword"
+        type="password"
+        autocomplete="current-password"
+        placeholder="At least 6 characters"
+      >
+    </div>
+
+    <div class="auth-buttons">
+      <button class="btn primary" onclick="signIn()">
+        Sign In
+      </button>
+
+      <button class="btn" onclick="signUp()">
+        Create Account
+      </button>
+
+      <button class="btn" onclick="continueAsGuest()">
+        Continue as Guest
+      </button>
+    </div>
+
+    <div id="authMessage" class="auth-message"></div>
+
+    <div class="auth-message">
+      Guest mode saves your data on this browser.
+      An account lets PersonaLab save your simulation to Supabase.
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================
+     MAIN APP
+========================= -->
+
+<div id="app" class="app hidden">
+
+  <header class="topbar">
 
     <div class="logo">
-        Persona<span>Lab</span>
+      Persona<span>Lab</span>
     </div>
 
-    <div class="nav">
-
-        <button
-            class="nav-btn active"
-            onclick="showPage('lab', this)"
-        >
-            🧪 Lab
-        </button>
-
-        <button
-            class="nav-btn"
-            onclick="showPage('characters', this)"
-        >
-            👤 Characters
-        </button>
-
-        <button
-            class="nav-btn"
-            onclick="showPage('rooms', this)"
-        >
-            🏠 Rooms
-        </button>
-
+    <div id="accountStatus" class="top-status">
+      Guest
     </div>
 
-</aside>
+    <div class="spacer"></div>
+
+    <button
+      class="btn small"
+      onclick="openAccountModal()"
+    >
+      Account
+    </button>
+
+    <button
+      id="signOutButton"
+      class="btn small danger"
+      onclick="signOut()"
+      style="display:none"
+    >
+      Sign out
+    </button>
+
+  </header>
 
 
-<main class="main">
+  <div class="layout">
+
+    <!-- =========================
+         SIDEBAR
+    ========================= -->
+
+    <nav class="sidebar">
+
+      <button
+        class="nav-button active"
+        onclick="showPage('lab', this)"
+      >
+        🧪 Lab
+      </button>
+
+      <button
+        class="nav-button"
+        onclick="showPage('characters', this)"
+      >
+        👤 Characters
+      </button>
+
+      <button
+        class="nav-button"
+        onclick="showPage('rooms', this)"
+      >
+        🚪 Rooms
+      </button>
+
+    </nav>
 
 
-<section id="lab" class="page active">
+    <!-- =========================
+         MAIN
+    ========================= -->
 
-    <div class="header">
+    <main>
 
-        <h1>Simulation Lab</h1>
+      <!-- LAB -->
 
-        <div>
+      <section id="page-lab" class="page active">
 
-            <button
-                id="generateButton"
+        <div class="title">
+          Simulation Lab
+        </div>
+
+        <div class="subtitle">
+          You are the Director. The characters can keep talking
+          without you.
+        </div>
+
+
+        <div class="card">
+
+          <div class="between">
+
+            <div>
+
+              <div
+                id="roomTitle"
+                class="card-title"
+              >
+                No room selected
+              </div>
+
+              <div
+                id="roomInfo"
+                class="card-subtitle"
+              >
+                Create a room and add characters.
+              </div>
+
+            </div>
+
+            <div class="row">
+
+              <button
+                id="simulationButton"
                 class="btn primary"
-                onclick="generateTurns()"
-            >
-                Generate 20
-            </button>
+                onclick="handleSimulationButton()"
+              >
+                Start
+              </button>
 
-            <button
-                class="btn"
-                onclick="togglePause()"
-            >
-                <span id="pauseText">
-                    Pause
-                </span>
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <div class="lab">
-
-
-    <div class="chat-card">
-
-        <div class="chat-top">
-
-            <div class="chat-title">
-                Current Simulation
-            </div>
-
-            <div class="chat-actions">
-
-                <button
-                    class="btn"
-                    onclick="openCharacterModal()"
-                >
-                    + Character
-                </button>
-
-                <button
-                    class="btn"
-                    onclick="clearChat()"
-                >
-                    Clear
-                </button>
+              <button
+                class="btn small"
+                onclick="clearConversation()"
+              >
+                Clear
+              </button>
 
             </div>
+
+          </div>
 
         </div>
 
 
-        <div id="chat" class="chat"></div>
+        <div class="card">
 
+          <div id="chat" class="chat"></div>
 
-        <div class="director-box">
+          <div class="director-bar">
 
             <input
-                id="directorInput"
-                type="text"
-                placeholder="Give the simulation a Director instruction..."
-                onkeydown="if(event.key==='Enter') sendDirectorInstruction()"
+              id="directorInput"
+              type="text"
+              placeholder="Talk to the simulation..."
+              onkeydown="if(event.key === 'Enter') sendDirectorMessage()"
             >
 
             <button
-                class="btn primary"
-                onclick="sendDirectorInstruction()"
+              class="btn"
+              onclick="sendDirectorMessage()"
             >
-                Send
+              Talk
             </button>
 
+          </div>
+
+          <div class="muted" style="margin-top:7px">
+            The Director only speaks when you press Talk.
+          </div>
+
         </div>
 
-    </div>
+      </section>
 
 
-    <aside class="panel">
+      <!-- CHARACTERS -->
 
-        <h3>Simulation</h3>
+      <section id="page-characters" class="page">
 
-        <div class="topic-box">
+        <div class="between">
 
-            <strong>Topic</strong>
+          <div>
 
-            <div id="topicText">
-                Free conversation
+            <div class="title">
+              Characters
             </div>
 
-        </div>
-
-
-        <h3>Relationships</h3>
-
-        <div id="relationships">
-
-            <div class="empty">
-                No relationships yet.
+            <div class="subtitle">
+              Give every character their own personality,
+              traits, speaking style and memories.
             </div>
 
+          </div>
+
+          <button
+            class="btn primary"
+            onclick="openCharacterModal()"
+          >
+            + Character
+          </button>
+
         </div>
 
+        <div
+          id="characterList"
+          class="list"
+        ></div>
 
-        <div class="events">
+      </section>
 
-            <h3>Events</h3>
 
-            <div id="events">
+      <!-- ROOMS -->
 
-                <div class="empty">
-                    Nothing notable yet.
-                </div>
+      <section id="page-rooms" class="page">
 
+        <div class="between">
+
+          <div>
+
+            <div class="title">
+              Rooms
             </div>
 
+            <div class="subtitle">
+              Put characters together and give them a situation.
+            </div>
+
+          </div>
+
+          <button
+            class="btn primary"
+            onclick="openRoomModal()"
+          >
+            + Room
+          </button>
+
         </div>
+
+        <div
+          id="roomList"
+          class="list"
+        ></div>
+
+      </section>
+
+    </main>
+
+
+    <!-- =========================
+         RIGHT SIDEBAR
+    ========================= -->
+
+    <aside class="right-sidebar">
+
+      <div class="card">
+
+        <div class="between">
+
+          <strong>
+            Relationships
+          </strong>
+
+          <span class="muted">
+            live
+          </span>
+
+        </div>
+
+        <div
+          id="relationshipList"
+          style="margin-top:8px"
+        ></div>
+
+      </div>
+
+
+      <div class="card">
+
+        <div class="between">
+
+          <strong>
+            Events
+          </strong>
+
+          <span class="muted">
+            recent
+          </span>
+
+        </div>
+
+        <div
+          id="eventList"
+          style="margin-top:8px"
+        ></div>
+
+      </div>
 
     </aside>
 
-
-    </div>
-
-</section>
-
-
-<section id="characters" class="page">
-
-    <div class="header">
-
-        <h1>Characters</h1>
-
-        <button
-            class="btn primary"
-            onclick="openCharacterModal()"
-        >
-            + Create Character
-        </button>
-
-    </div>
-
-    <div
-        id="characterGrid"
-        class="character-grid"
-    ></div>
-
-</section>
-
-
-<section id="rooms" class="page">
-
-    <div class="header">
-
-        <h1>Rooms</h1>
-
-        <button
-            class="btn primary"
-            onclick="openRoomModal()"
-        >
-            + Create Room
-        </button>
-
-    </div>
-
-    <div
-        id="roomGrid"
-        class="room-grid"
-    ></div>
-
-</section>
-
-
-</main>
+  </div>
 
 </div>
 
 
-<div
-    id="characterModal"
-    class="modal"
->
+<!-- =========================
+     CHARACTER MODAL
+========================= -->
 
-<div class="modal-box">
+<div id="characterModal" class="modal">
 
-    <h2>Create Character</h2>
+  <div class="modal-box">
 
-    <div class="form-group">
+    <div class="between">
 
-        <label>Name</label>
+      <h2 id="characterModalTitle">
+        Create Character
+      </h2>
+
+      <button
+        class="btn small"
+        onclick="closeModal('characterModal')"
+      >
+        ✕
+      </button>
+
+    </div>
+
+    <input
+      id="editingCharacterId"
+      type="hidden"
+    >
+
+    <div class="grid">
+
+      <div>
+
+        <label>
+          Name
+        </label>
 
         <input
-            id="characterName"
-            placeholder="Example: Alex"
+          id="characterName"
+          placeholder="Alex"
         >
 
-    </div>
+      </div>
 
+      <div>
 
-    <div class="form-group">
-
-        <label>Personality</label>
-
-        <textarea
-            id="characterPersonality"
-            placeholder="Describe how they usually behave..."
-        ></textarea>
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label>Traits</label>
+        <label>
+          Speaking Style
+        </label>
 
         <input
-            id="characterTraits"
-            placeholder="funny, confident, stubborn"
+          id="characterSpeaking"
+          placeholder="Sarcastic, quiet, energetic..."
         >
 
-    </div>
-
-
-    <div class="form-group">
-
-        <label>Speaking Style</label>
-
-        <textarea
-            id="characterSpeaking"
-            placeholder="Short sentences, sarcastic, formal, etc."
-        ></textarea>
+      </div>
 
     </div>
 
 
-    <div class="form-group">
+    <div style="margin-top:10px">
 
-        <label>Starting Memories</label>
+      <label>
+        Personality
+      </label>
 
-        <textarea
-            id="characterMemories"
-            placeholder="Things this character remembers..."
-        ></textarea>
+      <textarea
+        id="characterPersonality"
+        placeholder="Describe how this person normally behaves."
+      ></textarea>
+
+    </div>
+
+
+    <div style="margin-top:10px">
+
+      <label>
+        Traits
+      </label>
+
+      <input
+        id="characterTraits"
+        placeholder="confident, competitive, curious"
+      >
 
     </div>
 
 
-    <div class="modal-actions">
+    <div style="margin-top:10px">
 
-        <button
-            class="btn"
-            onclick="closeCharacterModal()"
-        >
-            Cancel
-        </button>
+      <label>
+        Memories
+      </label>
 
-        <button
-            class="btn primary"
-            onclick="createCharacter()"
-        >
-            Create
-        </button>
+      <textarea
+        id="characterMemories"
+        placeholder="Things this character remembers."
+      ></textarea>
 
     </div>
+
+
+    <div class="row" style="margin-top:13px">
+
+      <button
+        class="btn primary"
+        onclick="saveCharacter()"
+      >
+        Save Character
+      </button>
+
+      <button
+        class="btn"
+        onclick="closeModal('characterModal')"
+      >
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
 
 </div>
 
+
+<!-- =========================
+     ROOM MODAL
+========================= -->
+
+<div id="roomModal" class="modal">
+
+  <div class="modal-box">
+
+    <div class="between">
+
+      <h2>
+        <span id="roomModalTitle">
+          Create Room
+        </span>
+      </h2>
+
+      <button
+        class="btn small"
+        onclick="closeModal('roomModal')"
+      >
+        ✕
+      </button>
+
+    </div>
+
+    <input
+      id="editingRoomId"
+      type="hidden"
+    >
+
+    <label>
+      Room Name
+    </label>
+
+    <input
+      id="roomName"
+      placeholder="Living Room"
+    >
+
+
+    <div style="margin-top:10px">
+
+      <label>
+        Situation / Topic
+      </label>
+
+      <input
+        id="roomTopic"
+        placeholder="A normal afternoon together."
+      >
+
+    </div>
+
+
+    <div style="margin-top:12px">
+
+      <label>
+        Characters
+      </label>
+
+      <div
+        id="roomCharacterPicker"
+        class="list"
+      ></div>
+
+    </div>
+
+
+    <div class="row" style="margin-top:13px">
+
+      <button
+        class="btn primary"
+        onclick="saveRoom()"
+      >
+        Save Room
+      </button>
+
+      <button
+        class="btn"
+        onclick="closeModal('roomModal')"
+      >
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+
 </div>
 
 
-<div
-    id="roomModal"
-    class="modal"
->
+<!-- =========================
+     ACCOUNT MODAL
+========================= -->
 
-<div class="modal-box">
+<div id="accountModal" class="modal">
 
-    <h2>Create Room</h2>
+  <div class="modal-box">
 
-    <div class="form-group">
+    <div class="between">
 
-        <label>Room Name</label>
+      <h2>
+        Account
+      </h2>
 
-        <input
-            id="roomName"
-            placeholder="Example: Cafeteria"
-        >
-
-    </div>
-
-
-    <div class="form-group">
-
-        <label>Description</label>
-
-        <textarea
-            id="roomDescription"
-            placeholder="Describe the room..."
-        ></textarea>
+      <button
+        class="btn small"
+        onclick="closeModal('accountModal')"
+      >
+        ✕
+      </button>
 
     </div>
 
+    <p
+      id="accountDetails"
+      class="auth-message"
+    ></p>
 
-    <div class="modal-actions">
+    <div class="row">
 
-        <button
-            class="btn"
-            onclick="closeRoomModal()"
-        >
-            Cancel
-        </button>
+      <button
+        class="btn"
+        onclick="saveToCloud()"
+      >
+        Save to Cloud
+      </button>
 
-        <button
-            class="btn primary"
-            onclick="createRoom()"
-        >
-            Create
-        </button>
+      <button
+        class="btn"
+        onclick="loadCloud()"
+      >
+        Load Cloud Data
+      </button>
 
     </div>
 
-</div>
+  </div>
 
 </div>
 
@@ -837,1569 +1176,1833 @@ button {
 
 /* =========================================================
    CONFIG
-   ========================================================= */
+========================================================= */
 
 const SUPABASE_URL =
-    "https://riqoxjuzdjqisczezmse.supabase.co";
+  "https://riqoxjuzdjqisczezmse.supabase.co";
+
+/*
+ IMPORTANT:
+ Replace the text below with your Supabase
+ publishable/anon key.
+
+ DO NOT put your OpenRouter API key here.
+*/
 
 const SUPABASE_ANON_KEY =
-    "sb_publishable_gbrG0FYf42bNenKMX45jLg_JJe02Gle";
+  "sb_publishable_gbrG0FYf42bNenKMX45jLg_JJe02Gle";
 
 const FUNCTION_NAME =
-    "personala-ai";
+  "personala-ai";
+
+const BATCH_SIZE = 4;
+
+const STORAGE_KEY =
+  "PersonaLab_V2_Data";
+
+
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+
+/* =========================================================
+   APP STATE
+========================================================= */
+
+let currentUser = null;
+
+let guestMode = false;
+
+let simulationRunning = false;
+
+let simulationPaused = false;
+
+let simulationLoopActive = false;
+
+let pendingBatch = null;
+
+let pendingDirectorMessage = "";
+
+let saveTimer = null;
 
 
 /* =========================================================
    DATA
-   ========================================================= */
+========================================================= */
 
-const STORAGE_KEY =
-    "PersonaLab_Data_V3";
+let data = {
 
-let data =
-    JSON.parse(
-        localStorage.getItem(STORAGE_KEY)
-    ) || {
+  characters: [],
 
-        characters: [
+  rooms: [],
 
-            {
-                id: crypto.randomUUID(),
-                name: "Alex",
-                personality:
-                    "Friendly, curious, energetic and likes meeting new people.",
-                traits:
-                    ["friendly", "curious", "energetic"],
-                speaking:
-                    "Casual and upbeat.",
-                memories:
-                    "Remembers that they enjoy talking with people."
-            },
+  activeRoomId: null,
 
-            {
-                id: crypto.randomUUID(),
-                name: "Nova",
-                personality:
-                    "Smart, confident and competitive. Likes proving their point.",
-                traits:
-                    ["smart", "confident", "competitive"],
-                speaking:
-                    "Direct and confident.",
-                memories:
-                    "Remembers that they hate losing arguments."
-            },
+  relationships: [],
 
-            {
-                id: crypto.randomUUID(),
-                name: "Raven",
-                personality:
-                    "Quiet, observant and sarcastic. Does not trust people immediately.",
-                traits:
-                    ["quiet", "observant", "sarcastic"],
-                speaking:
-                    "Dry and sarcastic.",
-                memories:
-                    "Remembers that they usually observe before speaking."
-            }
+  events: [],
 
-        ],
+  messages: [],
 
-        rooms: [
+  topic:
+    "A normal day together."
 
-            {
-                id: crypto.randomUUID(),
-                name: "Main Room",
-                description:
-                    "A simple room where everyone can talk."
-            }
-
-        ],
-
-        messages: [],
-
-        relationships: {},
-
-        events: [],
-
-        topic:
-            "Free conversation"
-
-    };
-
-
-let paused = false;
-
-let generating = false;
+};
 
 
 /* =========================================================
-   SAVE
-   ========================================================= */
+   HELPERS
+========================================================= */
 
-function saveData() {
+function uid(prefix = "id") {
 
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(data)
-    );
-
-}
-
-
-/* =========================================================
-   PAGE NAVIGATION
-   ========================================================= */
-
-function showPage(
-    pageId,
-    button
-) {
-
-    document
-        .querySelectorAll(".page")
-        .forEach(page => {
-
-            page.classList.remove(
-                "active"
-            );
-
-        });
-
-
-    document
-        .getElementById(pageId)
-        .classList.add("active");
-
-
-    document
-        .querySelectorAll(".nav-btn")
-        .forEach(btn => {
-
-            btn.classList.remove(
-                "active"
-            );
-
-        });
-
-
-    button.classList.add("active");
-
-
-    if (pageId === "characters") {
-        renderCharacters();
-    }
-
-    if (pageId === "rooms") {
-        renderRooms();
-    }
+  return (
+    prefix +
+    "_" +
+    Math.random()
+      .toString(36)
+      .slice(2, 10) +
+    "_" +
+    Date.now()
+      .toString(36)
+  );
 
 }
 
-
-/* =========================================================
-   CHAT RENDER
-   ========================================================= */
-
-function renderChat() {
-
-    const chat =
-        document.getElementById(
-            "chat"
-        );
-
-
-    chat.innerHTML = "";
-
-
-    if (!data.messages.length) {
-
-        chat.innerHTML = `
-            <div class="empty">
-                The simulation hasn't started yet.
-                Press <strong>Generate 20</strong>
-                to let the characters talk.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    data.messages.forEach(
-        message => {
-
-            addMessageToScreen(
-                message
-            );
-
-        }
-    );
-
-
-    chat.scrollTop =
-        chat.scrollHeight;
-
-}
-
-
-/* =========================================================
-   ADD ONE MESSAGE
-   ========================================================= */
-
-function addMessageToScreen(
-    message
-) {
-
-    const chat =
-        document.getElementById(
-            "chat"
-        );
-
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.className =
-        "message";
-
-
-    if (
-        message.character ===
-        "Director"
-    ) {
-
-        div.classList.add(
-            "director"
-        );
-
-    }
-
-
-    if (
-        message.character ===
-        "System"
-    ) {
-
-        div.classList.add(
-            "system"
-        );
-
-    }
-
-
-    div.innerHTML = `
-
-        <div class="message-name">
-            ${escapeHTML(
-                message.character
-            )}
-        </div>
-
-        <div class="message-text">
-            ${escapeHTML(
-                message.message
-            )}
-        </div>
-
-    `;
-
-
-    chat.appendChild(div);
-
-
-    chat.scrollTop =
-        chat.scrollHeight;
-
-}
-
-
-/* =========================================================
-   TYPING INDICATOR
-   ========================================================= */
-
-function showTyping(
-    character
-) {
-
-    removeTyping();
-
-
-    const chat =
-        document.getElementById(
-            "chat"
-        );
-
-
-    const div =
-        document.createElement(
-            "div"
-        );
-
-
-    div.id =
-        "typingIndicator";
-
-
-    div.className =
-        "typing";
-
-
-    div.textContent =
-        `${character} is typing...`;
-
-
-    chat.appendChild(div);
-
-
-    chat.scrollTop =
-        chat.scrollHeight;
-
-}
-
-
-function removeTyping() {
-
-    const typing =
-        document.getElementById(
-            "typingIndicator"
-        );
-
-
-    if (typing) {
-        typing.remove();
-    }
-
-}
-
-
-/* =========================================================
-   DELAY
-   ========================================================= */
 
 function wait(ms) {
 
-    return new Promise(
-        resolve =>
-            setTimeout(
-                resolve,
-                ms
-            )
-    );
+  return new Promise(
+    resolve => setTimeout(resolve, ms)
+  );
+
+}
+
+
+function clamp(
+  value,
+  min,
+  max
+) {
+
+  const n =
+    Number(value);
+
+  if (!Number.isFinite(n)) {
+    return 0;
+  }
+
+  return Math.max(
+    min,
+    Math.min(max, n)
+  );
 
 }
 
 
 /* =========================================================
-   CHARACTER RENDER
-   ========================================================= */
+   LOCAL SAVE
+========================================================= */
 
-function renderCharacters() {
+function loadLocal() {
 
-    const grid =
-        document.getElementById(
-            "characterGrid"
-        );
+  try {
 
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          STORAGE_KEY
+        )
+      );
 
-    if (!data.characters.length) {
+    if (
+      saved &&
+      typeof saved === "object"
+    ) {
 
-        grid.innerHTML = `
-            <div class="empty">
-                No characters yet.
-            </div>
-        `;
+      data = {
+        ...data,
+        ...saved
+      };
 
-        return;
     }
 
+  } catch (error) {
 
-    grid.innerHTML = "";
-
-
-    data.characters.forEach(
-        character => {
-
-            const card =
-                document.createElement(
-                    "div"
-                );
-
-
-            card.className =
-                "character-card";
-
-
-            const tags =
-                character.traits
-                    .map(
-                        trait => `
-                            <span class="tag">
-                                ${escapeHTML(
-                                    trait
-                                )}
-                            </span>
-                        `
-                    )
-                    .join("");
-
-
-            card.innerHTML = `
-
-                <div class="character-name">
-                    ${escapeHTML(
-                        character.name
-                    )}
-                </div>
-
-                <div class="character-info">
-                    ${escapeHTML(
-                        character.personality
-                    )}
-                </div>
-
-                <div class="tags">
-                    ${tags}
-                </div>
-
-                <div class="character-info">
-                    <strong>Speaking:</strong>
-                    ${escapeHTML(
-                        character.speaking
-                    )}
-                </div>
-
-                <div class="character-info">
-                    <strong>Memories:</strong>
-                    ${escapeHTML(
-                        character.memories
-                    )}
-                </div>
-
-                <div class="card-actions">
-
-                    <button
-                        class="btn danger"
-                        onclick="deleteCharacter('${character.id}')"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            `;
-
-
-            grid.appendChild(card);
-
-        }
+    console.error(
+      "Local save error:",
+      error
     );
+
+  }
+
+}
+
+
+function saveLocal() {
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(data)
+  );
+
+}
+
+
+function scheduleSave() {
+
+  saveLocal();
+
+  clearTimeout(saveTimer);
+
+  if (currentUser) {
+
+    saveTimer =
+      setTimeout(
+        saveToCloud,
+        700
+      );
+
+  }
+
+}
+
+
+/* =========================================================
+   CLOUD SAVE
+========================================================= */
+
+async function saveToCloud() {
+
+  if (!currentUser) {
+
+    setAccountStatus(
+      "Guest mode"
+    );
+
+    return;
+
+  }
+
+  try {
+
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("personala_saves")
+        .upsert(
+          {
+            user_id:
+              currentUser.id,
+
+            data:
+              data,
+
+            updated_at:
+              new Date().toISOString()
+          },
+          {
+            onConflict:
+              "user_id"
+          }
+        );
+
+    if (error) {
+      throw error;
+    }
+
+    setAccountStatus(
+      "Saved ✓"
+    );
+
+  } catch (error) {
+
+    console.error(
+      "Cloud save error:",
+      error
+    );
+
+    setAccountStatus(
+      "Cloud save error"
+    );
+
+  }
+
+}
+
+
+async function loadCloud() {
+
+  if (!currentUser) {
+    return;
+  }
+
+  try {
+
+    const {
+      data: row,
+      error
+    } =
+      await supabaseClient
+        .from("personala_saves")
+        .select("data")
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .maybeSingle();
+
+    if (error) {
+      throw error;
+    }
+
+    if (
+      row &&
+      row.data
+    ) {
+
+      data = {
+        ...data,
+        ...row.data
+      };
+
+      saveLocal();
+
+      renderAll();
+
+    } else {
+
+      await saveToCloud();
+
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Cloud load error:",
+      error
+    );
+
+    setAccountStatus(
+      "Cloud load error"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+function setAuthMessage(message) {
+
+  document.getElementById(
+    "authMessage"
+  ).textContent =
+    message;
+
+}
+
+
+function setAccountStatus(message) {
+
+  document.getElementById(
+    "accountStatus"
+  ).textContent =
+    message;
+
+}
+
+
+async function signUp() {
+
+  const email =
+    document.getElementById(
+      "authEmail"
+    ).value.trim();
+
+  const password =
+    document.getElementById(
+      "authPassword"
+    ).value;
+
+  if (!email) {
+
+    setAuthMessage(
+      "Enter your email."
+    );
+
+    return;
+
+  }
+
+  if (password.length < 6) {
+
+    setAuthMessage(
+      "Password must be at least 6 characters."
+    );
+
+    return;
+
+  }
+
+  setAuthMessage(
+    "Creating account..."
+  );
+
+  const {
+    data: result,
+    error
+  } =
+    await supabaseClient.auth.signUp(
+      {
+        email,
+        password
+      }
+    );
+
+  if (error) {
+
+    setAuthMessage(
+      error.message
+    );
+
+    return;
+
+  }
+
+  if (result.session) {
+
+    await enterApp(
+      result.user,
+      false
+    );
+
+  } else {
+
+    setAuthMessage(
+      "Account created. Check your email if email confirmation is enabled, then sign in."
+    );
+
+  }
+
+}
+
+
+async function signIn() {
+
+  const email =
+    document.getElementById(
+      "authEmail"
+    ).value.trim();
+
+  const password =
+    document.getElementById(
+      "authPassword"
+    ).value;
+
+  if (!email || !password) {
+
+    setAuthMessage(
+      "Enter your email and password."
+    );
+
+    return;
+
+  }
+
+  setAuthMessage(
+    "Signing in..."
+  );
+
+  const {
+    data: result,
+    error
+  } =
+    await supabaseClient.auth
+      .signInWithPassword(
+        {
+          email,
+          password
+        }
+      );
+
+  if (error) {
+
+    setAuthMessage(
+      error.message
+    );
+
+    return;
+
+  }
+
+  await enterApp(
+    result.user,
+    false
+  );
+
+}
+
+
+function continueAsGuest() {
+
+  guestMode = true;
+
+  currentUser = null;
+
+  loadLocal();
+
+  enterApp(
+    null,
+    true
+  );
+
+}
+
+
+async function signOut() {
+
+  simulationRunning =
+    false;
+
+  simulationPaused =
+    false;
+
+  pendingBatch =
+    null;
+
+  await supabaseClient.auth.signOut();
+
+  currentUser = null;
+
+  guestMode = false;
+
+  document.getElementById(
+    "app"
+  ).classList.add(
+    "hidden"
+  );
+
+  document.getElementById(
+    "authScreen"
+  ).classList.remove(
+    "hidden"
+  );
+
+}
+
+
+async function enterApp(
+  user,
+  isGuest
+) {
+
+  currentUser =
+    user;
+
+  guestMode =
+    isGuest;
+
+  document.getElementById(
+    "authScreen"
+  ).classList.add(
+    "hidden"
+  );
+
+  document.getElementById(
+    "app"
+  ).classList.remove(
+    "hidden"
+  );
+
+  loadLocal();
+
+  if (user) {
+
+    await loadCloud();
+
+  }
+
+  updateAccountUI();
+
+  renderAll();
+
+}
+
+
+function updateAccountUI() {
+
+  if (currentUser) {
+
+    setAccountStatus(
+      currentUser.email
+    );
+
+    document.getElementById(
+      "signOutButton"
+    ).style.display =
+      "block";
+
+  } else {
+
+    setAccountStatus(
+      "Guest mode"
+    );
+
+    document.getElementById(
+      "signOutButton"
+    ).style.display =
+      "none";
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTH SESSION CHECK
+========================================================= */
+
+supabaseClient.auth
+  .getSession()
+  .then(
+    async ({
+      data: sessionData
+    }) => {
+
+      if (
+        sessionData &&
+        sessionData.session
+      ) {
+
+        await enterApp(
+          sessionData.session.user,
+          false
+        );
+
+      }
+
+    }
+  );
+
+
+supabaseClient.auth
+  .onAuthStateChange(
+    async (
+      event,
+      session
+    ) => {
+
+      if (
+        session &&
+        !currentUser
+      ) {
+
+        await enterApp(
+          session.user,
+          false
+        );
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   ACCOUNT MODAL
+========================================================= */
+
+function openAccountModal() {
+
+  const details =
+    document.getElementById(
+      "accountDetails"
+    );
+
+  if (currentUser) {
+
+    details.textContent =
+      "Signed in as " +
+      currentUser.email +
+      ". Your PersonaLab data can be synced to Supabase.";
+
+  } else {
+
+    details.textContent =
+      "You are using Guest mode. Your data is saved in this browser. Create an account if you want cloud saving.";
+
+  }
+
+  document.getElementById(
+    "accountModal"
+  ).classList.add(
+    "show"
+  );
+
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function showPage(
+  page,
+  button
+) {
+
+  document
+    .querySelectorAll(".page")
+    .forEach(
+      element =>
+        element.classList.remove(
+          "active"
+        )
+    );
+
+  const target =
+    document.getElementById(
+      "page-" + page
+    );
+
+  if (target) {
+
+    target.classList.add(
+      "active"
+    );
+
+  }
+
+  document
+    .querySelectorAll(".nav-button")
+    .forEach(
+      element =>
+        element.classList.remove(
+          "active"
+        )
+    );
+
+  if (button) {
+
+    button.classList.add(
+      "active"
+    );
+
+  }
 
 }
 
 
 /* =========================================================
    ROOMS
-   ========================================================= */
+========================================================= */
 
-function renderRooms() {
+function getActiveRoom() {
 
-    const grid =
-        document.getElementById(
-            "roomGrid"
-        );
+  return data.rooms.find(
+    room =>
+      room.id ===
+      data.activeRoomId
+  ) || null;
 
-
-    if (!data.rooms.length) {
-
-        grid.innerHTML = `
-            <div class="empty">
-                No rooms yet.
-            </div>
-        `;
-
-        return;
-    }
+}
 
 
-    grid.innerHTML = "";
+function getActiveCharacters() {
+
+  const room =
+    getActiveRoom();
+
+  if (!room) {
+    return [];
+  }
+
+  return data.characters.filter(
+    character =>
+      room.characterIds.includes(
+        character.id
+      )
+  );
+
+}
 
 
-    data.rooms.forEach(
-        room => {
+/* =========================================================
+   RENDER ALL
+========================================================= */
 
-            const card =
-                document.createElement(
-                    "div"
-                );
+function renderAll() {
 
+  renderLab();
 
-            card.className =
-                "room-card";
+  renderCharacters();
 
+  renderRooms();
 
-            card.innerHTML = `
+  renderRelationships();
 
-                <div class="room-name">
-                    🏠 ${escapeHTML(
-                        room.name
-                    )}
-                </div>
+  renderEvents();
 
-                <div class="room-info">
-                    ${escapeHTML(
-                        room.description
-                    )}
-                </div>
-
-                <div class="card-actions">
-
-                    <button
-                        class="btn danger"
-                        onclick="deleteRoom('${room.id}')"
-                    >
-                        Delete
-                    </button>
-
-                </div>
-
-            `;
+}
 
 
-            grid.appendChild(card);
+/* =========================================================
+   LAB
+========================================================= */
 
-        }
+function renderLab() {
+
+  const room =
+    getActiveRoom();
+
+  const characters =
+    getActiveCharacters();
+
+  document.getElementById(
+    "roomTitle"
+  ).textContent =
+    room
+      ? room.name
+      : "No room selected";
+
+  document.getElementById(
+    "roomInfo"
+  ).textContent =
+    room
+      ? `${characters.length} character(s) • ${
+          room.topic ||
+          "Free conversation"
+        }`
+      : "Create a room and add characters.";
+
+  renderChat();
+
+  updateSimulationButton();
+
+}
+
+
+/* =========================================================
+   CHAT
+========================================================= */
+
+function renderChat() {
+
+  const chat =
+    document.getElementById(
+      "chat"
     );
 
-}
+  chat.innerHTML = "";
 
-
-/* =========================================================
-   CHARACTER MODAL
-   ========================================================= */
-
-function openCharacterModal() {
-
-    document
-        .getElementById(
-            "characterModal"
-        )
-        .classList.add("show");
-
-}
-
-
-function closeCharacterModal() {
-
-    document
-        .getElementById(
-            "characterModal"
-        )
-        .classList.remove("show");
-
-}
-
-
-function createCharacter() {
-
-    const name =
-        document
-            .getElementById(
-                "characterName"
-            )
-            .value
-            .trim();
-
-
-    const personality =
-        document
-            .getElementById(
-                "characterPersonality"
-            )
-            .value
-            .trim();
-
-
-    const traits =
-        document
-            .getElementById(
-                "characterTraits"
-            )
-            .value
-            .split(",")
-            .map(
-                x => x.trim()
-            )
-            .filter(Boolean);
-
-
-    const speaking =
-        document
-            .getElementById(
-                "characterSpeaking"
-            )
-            .value
-            .trim();
-
-
-    const memories =
-        document
-            .getElementById(
-                "characterMemories"
-            )
-            .value
-            .trim();
-
-
-    if (!name) {
-
-        alert(
-            "Give the character a name."
-        );
-
-        return;
-    }
-
-
-    data.characters.push({
-
-        id:
-            crypto.randomUUID(),
-
-        name,
-
-        personality:
-            personality ||
-            "A unique personality.",
-
-        traits,
-
-        speaking:
-            speaking ||
-            "Natural and conversational.",
-
-        memories:
-            memories ||
-            "No starting memories."
-
-    });
-
-
-    saveData();
-
-    renderCharacters();
-
-    closeCharacterModal();
-
-
-    document.getElementById(
-        "characterName"
-    ).value = "";
-
-    document.getElementById(
-        "characterPersonality"
-    ).value = "";
-
-    document.getElementById(
-        "characterTraits"
-    ).value = "";
-
-    document.getElementById(
-        "characterSpeaking"
-    ).value = "";
-
-    document.getElementById(
-        "characterMemories"
-    ).value = "";
-
-}
-
-
-/* =========================================================
-   DELETE CHARACTER
-   ========================================================= */
-
-function deleteCharacter(id) {
-
-    const character =
-        data.characters.find(
-            c => c.id === id
-        );
-
-
-    if (!character) return;
-
+  for (
+    const message
+    of data.messages || []
+  ) {
 
     if (
-        !confirm(
-            `Delete ${character.name}?`
-        )
+      message.character ===
+      "System"
     ) {
-        return;
-    }
 
-
-    data.characters =
-        data.characters.filter(
-            c => c.id !== id
+      const element =
+        document.createElement(
+          "div"
         );
 
+      element.className =
+        "system-message";
 
-    saveData();
+      element.textContent =
+        message.message;
 
-    renderCharacters();
+      chat.appendChild(
+        element
+      );
 
-}
+      continue;
 
+    }
 
-/* =========================================================
-   ROOM MODAL
-   ========================================================= */
+    const element =
+      document.createElement(
+        "div"
+      );
 
-function openRoomModal() {
-
-    document
-        .getElementById(
-            "roomModal"
-        )
-        .classList.add("show");
-
-}
-
-
-function closeRoomModal() {
-
-    document
-        .getElementById(
-            "roomModal"
-        )
-        .classList.remove("show");
-
-}
-
-
-function createRoom() {
+    element.className =
+      "message" +
+      (
+        message.character ===
+        "Director"
+          ? " director"
+          : ""
+      );
 
     const name =
-        document
-            .getElementById(
-                "roomName"
-            )
-            .value
-            .trim();
+      document.createElement(
+        "div"
+      );
 
+    name.className =
+      "message-name";
 
-    const description =
-        document
-            .getElementById(
-                "roomDescription"
-            )
-            .value
-            .trim();
+    name.textContent =
+      message.character;
 
+    const text =
+      document.createElement(
+        "div"
+      );
 
-    if (!name) {
+    text.className =
+      "message-text";
 
-        alert(
-            "Give the room a name."
-        );
+    text.textContent =
+      message.message;
 
-        return;
-    }
+    element.appendChild(
+      name
+    );
 
+    element.appendChild(
+      text
+    );
 
-    data.rooms.push({
+    chat.appendChild(
+      element
+    );
 
-        id:
-            crypto.randomUUID(),
+  }
 
-        name,
-
-        description:
-            description ||
-            "An ordinary room."
-
-    });
-
-
-    saveData();
-
-    renderRooms();
-
-    closeRoomModal();
-
-
-    document.getElementById(
-        "roomName"
-    ).value = "";
-
-    document.getElementById(
-        "roomDescription"
-    ).value = "";
+  chat.scrollTop =
+    chat.scrollHeight;
 
 }
 
 
-/* =========================================================
-   DELETE ROOM
-   ========================================================= */
+function addMessage(
+  character,
+  message
+) {
 
-function deleteRoom(id) {
+  data.messages.push(
+    {
+      id:
+        uid("msg"),
 
-    const room =
-        data.rooms.find(
-            r => r.id === id
-        );
+      character,
 
+      message,
 
-    if (!room) return;
-
-
-    if (
-        !confirm(
-            `Delete ${room.name}?`
-        )
-    ) {
-        return;
+      createdAt:
+        Date.now()
     }
+  );
 
+  if (
+    data.messages.length >
+    250
+  ) {
 
-    data.rooms =
-        data.rooms.filter(
-            r => r.id !== id
-        );
+    data.messages =
+      data.messages.slice(
+        -250
+      );
 
+  }
 
-    saveData();
+  scheduleSave();
 
-    renderRooms();
+  renderChat();
 
 }
 
 
-/* =========================================================
-   PAUSE
-   ========================================================= */
+function addSystemMessage(
+  message
+) {
 
-function togglePause() {
+  data.messages.push(
+    {
+      id:
+        uid("system"),
 
-    paused =
-        !paused;
+      character:
+        "System",
 
+      message,
 
-    document.getElementById(
-        "pauseText"
-    ).textContent =
-        paused
-            ? "Resume"
-            : "Pause";
-
-
-    if (paused) {
-
-        removeTyping();
-
-        addSystemMessage(
-            "Simulation paused."
-        );
-
-    } else {
-
-        addSystemMessage(
-            "Simulation resumed."
-        );
-
+      createdAt:
+        Date.now()
     }
+  );
+
+  scheduleSave();
+
+  renderChat();
+
+}
+
+
+function showTypingIndicator(
+  name
+) {
+
+  removeTypingIndicator();
+
+  const chat =
+    document.getElementById(
+      "chat"
+    );
+
+  const element =
+    document.createElement(
+      "div"
+    );
+
+  element.id =
+    "typingIndicator";
+
+  element.className =
+    "typing";
+
+  element.textContent =
+    name +
+    " is typing…";
+
+  chat.appendChild(
+    element
+  );
+
+  chat.scrollTop =
+    chat.scrollHeight;
+
+}
+
+
+function removeTypingIndicator() {
+
+  const element =
+    document.getElementById(
+      "typingIndicator"
+    );
+
+  if (element) {
+
+    element.remove();
+
+  }
 
 }
 
 
 /* =========================================================
    DIRECTOR
-   ========================================================= */
+========================================================= */
 
-function sendDirectorInstruction() {
+function sendDirectorMessage() {
 
-    const input =
-        document.getElementById(
-            "directorInput"
-        );
-
-
-    const instruction =
-        input.value.trim();
-
-
-    if (!instruction) return;
-
-
-    data.messages.push({
-
-        character:
-            "Director",
-
-        message:
-            instruction
-
-    });
-
-
-    input.value = "";
-
-
-    data.topic =
-        instruction;
-
-
-    saveData();
-
-    addMessageToScreen({
-        character: "Director",
-        message: instruction
-    });
-
-
+  const input =
     document.getElementById(
-        "topicText"
-    ).textContent =
-        instruction;
+      "directorInput"
+    );
+
+  const message =
+    input.value.trim();
+
+  if (!message) {
+    return;
+  }
+
+  /*
+    The Director is a real participant,
+    but only speaks when the user chooses to.
+  */
+
+  addMessage(
+    "Director",
+    message
+  );
+
+  /*
+    The AI receives this separately so it knows
+    the Director just spoke.
+  */
+
+  pendingDirectorMessage =
+    message;
+
+  input.value = "";
+
+  if (!simulationRunning) {
+
+    addSystemMessage(
+      "Director message queued. Press Start to let the characters respond."
+    );
+
+  }
 
 }
 
 
 /* =========================================================
-   SYSTEM MESSAGE
-   ========================================================= */
+   SIMULATION CONTROLS
+========================================================= */
 
-function addSystemMessage(
-    message
+function updateSimulationButton() {
+
+  const button =
+    document.getElementById(
+      "simulationButton"
+    );
+
+  if (!button) {
+    return;
+  }
+
+  if (
+    simulationRunning
+  ) {
+
+    button.textContent =
+      "Pause";
+
+  } else if (
+    simulationPaused
+  ) {
+
+    button.textContent =
+      "Resume";
+
+  } else {
+
+    button.textContent =
+      "Start";
+
+  }
+
+}
+
+
+function handleSimulationButton() {
+
+  if (
+    simulationRunning
+  ) {
+
+    pauseSimulation();
+
+    return;
+
+  }
+
+  if (
+    simulationPaused
+  ) {
+
+    resumeSimulation();
+
+    return;
+
+  }
+
+  startSimulation();
+
+}
+
+
+function startSimulation() {
+
+  const room =
+    getActiveRoom();
+
+  const characters =
+    getActiveCharacters();
+
+  if (!room) {
+
+    alert(
+      "Create or select a room first."
+    );
+
+    return;
+
+  }
+
+  if (
+    characters.length <
+    1
+  ) {
+
+    alert(
+      "Add at least one character to the room first."
+    );
+
+    return;
+
+  }
+
+  simulationRunning =
+    true;
+
+  simulationPaused =
+    false;
+
+  addSystemMessage(
+    "Simulation started."
+  );
+
+  updateSimulationButton();
+
+  runSimulationLoop();
+
+}
+
+
+function pauseSimulation() {
+
+  simulationRunning =
+    false;
+
+  simulationPaused =
+    true;
+
+  removeTypingIndicator();
+
+  addSystemMessage(
+    "Simulation paused."
+  );
+
+  updateSimulationButton();
+
+}
+
+
+function resumeSimulation() {
+
+  if (
+    simulationLoopActive
+  ) {
+
+    return;
+
+  }
+
+  simulationRunning =
+    true;
+
+  simulationPaused =
+    false;
+
+  addSystemMessage(
+    "Simulation resumed."
+  );
+
+  updateSimulationButton();
+
+  runSimulationLoop();
+
+}
+
+
+/* =========================================================
+   CONTINUOUS SIMULATION
+========================================================= */
+
+async function runSimulationLoop() {
+
+  if (
+    simulationLoopActive
+  ) {
+
+    return;
+
+  }
+
+  simulationLoopActive =
+    true;
+
+  try {
+
+    while (
+      simulationRunning
+    ) {
+
+      let batch =
+        pendingBatch;
+
+      pendingBatch =
+        null;
+
+      if (!batch) {
+
+        const result =
+          await callAI(
+            BATCH_SIZE,
+            pendingDirectorMessage
+          );
+
+        if (!result) {
+          break;
+        }
+
+        /*
+          Only clear the Director message
+          after a successful request.
+        */
+
+        pendingDirectorMessage =
+          "";
+
+        batch =
+          result;
+
+      }
+
+      if (
+        !simulationRunning
+      ) {
+
+        pendingBatch =
+          batch;
+
+        break;
+
+      }
+
+      const completed =
+        await revealBatch(
+          batch
+        );
+
+      if (!completed) {
+        break;
+      }
+
+      /*
+        Tiny breathing room before the next
+        AI request.
+      */
+
+      await wait(650);
+
+    }
+
+  } finally {
+
+    simulationLoopActive =
+      false;
+
+    updateSimulationButton();
+
+  }
+
+}
+
+
+/* =========================================================
+   REVEAL AI BATCH
+========================================================= */
+
+async function revealBatch(
+  batch
 ) {
 
-    data.messages.push({
+  const turns =
+    Array.isArray(
+      batch.turns
+    )
+      ? batch.turns
+      : [];
 
-        character:
-            "System",
+  if (!turns.length) {
 
-        message
+    addSystemMessage(
+      "The characters went quiet. Press Start to continue."
+    );
 
-    });
+    simulationRunning =
+      false;
+
+    simulationPaused =
+      false;
+
+    updateSimulationButton();
+
+    return false;
+
+  }
 
 
-    saveData();
+  for (
+    let i = 0;
+    i < turns.length;
+    i++
+  ) {
 
-    addMessageToScreen({
+    if (
+      !simulationRunning
+    ) {
 
-        character:
-            "System",
+      pendingBatch = {
 
-        message
+        turns:
+          turns.slice(i),
 
-    });
+        relationships:
+          batch.relationships ||
+          [],
+
+        events:
+          batch.events ||
+          []
+
+      };
+
+      return false;
+
+    }
+
+
+    const turn =
+      turns[i];
+
+    showTypingIndicator(
+      turn.character
+    );
+
+
+    const typingTime =
+      Math.min(
+        1500,
+        Math.max(
+          450,
+          turn.message.length * 16
+        )
+      );
+
+    await wait(
+      typingTime
+    );
+
+
+    if (
+      !simulationRunning
+    ) {
+
+      removeTypingIndicator();
+
+      pendingBatch = {
+
+        turns:
+          turns.slice(i),
+
+        relationships:
+          batch.relationships ||
+          [],
+
+        events:
+          batch.events ||
+          []
+
+      };
+
+      return false;
+
+    }
+
+
+    removeTypingIndicator();
+
+    addMessage(
+      turn.character,
+      turn.message
+    );
+
+    await wait(
+      250
+    );
+
+  }
+
+
+  applyRelationshipChanges(
+    batch.relationships ||
+    []
+  );
+
+  addEvents(
+    batch.events ||
+    []
+  );
+
+  return true;
 
 }
 
 
 /* =========================================================
-   GENERATE 20
-   ========================================================= */
+   AI CALL
+========================================================= */
 
-async function generateTurns() {
+async function callAI(
+  numberOfTurns = 4,
+  directorMessage = ""
+) {
 
-    if (generating) {
-        return;
-    }
+  const room =
+    getActiveRoom();
 
+  const characters =
+    getActiveCharacters();
 
-    if (paused) {
+  if (
+    !room ||
+    !characters.length
+  ) {
 
-        alert(
-            "The simulation is paused. Press Resume first."
-        );
+    addSystemMessage(
+      "The simulation needs a room with at least one character."
+    );
 
-        return;
-    }
+    simulationRunning =
+      false;
 
+    return null;
 
-    if (!data.characters.length) {
-
-        alert(
-            "Create at least one character first."
-        );
-
-        return;
-    }
-
-
-    generating =
-        true;
+  }
 
 
-    const generateButton =
-        document.getElementById(
-            "generateButton"
-        );
+  try {
+
+    const response =
+      await fetch(
+        `${SUPABASE_URL}/functions/v1/${FUNCTION_NAME}`,
+        {
+
+          method:
+            "POST",
+
+          headers: {
+
+            "Content-Type":
+              "application/json",
+
+            "apikey":
+              SUPABASE_ANON_KEY,
+
+            "Authorization":
+              `Bearer ${SUPABASE_ANON_KEY}`
+
+          },
+
+          body:
+            JSON.stringify(
+              {
+
+                characters,
+
+                conversation:
+                  (
+                    data.messages ||
+                    []
+                  ).slice(
+                    -50
+                  ),
+
+                topic:
+                  room.topic ||
+                  data.topic ||
+                  "A normal day together.",
+
+                turns:
+                  numberOfTurns,
+
+                relationships:
+                  data.relationships ||
+                  [],
+
+                directorMessage:
+                  directorMessage ||
+                  ""
+
+              }
+            )
+
+        }
+      );
 
 
-    generateButton.disabled =
-        true;
+    const raw =
+      await response.text();
 
 
-    generateButton.textContent =
-        "Thinking...";
-
+    let result;
 
     try {
 
-        const result =
-            await callAI();
-
-
-        if (
-            !result ||
-            !Array.isArray(
-                result.turns
-            )
-        ) {
-
-            throw new Error(
-                "The AI returned an invalid response."
-            );
-
-        }
-
-
-        /*
-          IMPORTANT:
-
-          We process the relationship/event data
-          immediately, but reveal the dialogue
-          one message at a time.
-        */
-
-        if (
-            Array.isArray(
-                result.relationships
-            )
-        ) {
-
-            processRelationships(
-                result.relationships
-            );
-
-        }
-
-
-        if (
-            Array.isArray(
-                result.events
-            )
-        ) {
-
-            processEvents(
-                result.events
-            );
-
-        }
-
-
-        removeTyping();
-
-
-        /*
-          Reveal each AI message individually.
-        */
-
-        for (
-            const turn of result.turns
-        ) {
-
-            if (paused) {
-                break;
-            }
-
-
-            if (
-                !turn ||
-                !turn.character ||
-                !turn.message
-            ) {
-                continue;
-            }
-
-
-            const validCharacter =
-                data.characters.some(
-                    character =>
-                        character.name ===
-                        turn.character
-                );
-
-
-            if (!validCharacter) {
-                continue;
-            }
-
-
-            showTyping(
-                turn.character
-            );
-
-
-            /*
-              Short natural delay.
-
-              Longer messages get slightly
-              more time before appearing.
-            */
-
-            const delay =
-                Math.min(
-                    1800,
-                    Math.max(
-                        650,
-                        turn.message.length * 18
-                    )
-                );
-
-
-            await wait(delay);
-
-
-            if (paused) {
-
-                removeTyping();
-
-                break;
-
-            }
-
-
-            removeTyping();
-
-
-            const message = {
-
-                character:
-                    turn.character,
-
-                message:
-                    turn.message
-
-            };
-
-
-            data.messages.push(
-                message
-            );
-
-
-            saveData();
-
-            addMessageToScreen(
-                message
-            );
-
-
-            /*
-              Tiny gap before the next person.
-            */
-
-            await wait(250);
-
-        }
-
-
-        renderRelationships();
-
-        renderEvents();
-
-
-    } catch (error) {
-
-        console.error(error);
-
-
-        removeTyping();
-
-
-        addSystemMessage(
-            "AI error: " +
-            error.message
+      result =
+        JSON.parse(
+          raw
         );
+
+    } catch {
+
+      throw new Error(
+        "Supabase returned invalid JSON: " +
+        raw.slice(
+          0,
+          1000
+        )
+      );
 
     }
 
 
-    generating =
-        false;
+    if (
+      !response.ok
+    ) {
 
-
-    generateButton.disabled =
-        false;
-
-
-    generateButton.textContent =
-        "Generate 20";
-
-}
-
-
-/* =========================================================
-   CALL SUPABASE
-   ========================================================= */
-
-async function callAI() {
-
-    const endpoint =
-        `${SUPABASE_URL}/functions/v1/${FUNCTION_NAME}`;
-
-
-    const conversation =
-        data.messages
-            .slice(-80)
-            .map(
-                message => ({
-
-                    character:
-                        message.character,
-
-                    message:
-                        message.message
-
-                })
-            );
-
-
-    const relationships =
-        Object.values(
-            data.relationships
-        );
-
-
-    const response =
-        await fetch(
-            endpoint,
-            {
-
-                method:
-                    "POST",
-
-                headers: {
-
-                    "Content-Type":
-                        "application/json",
-
-                    "Authorization":
-                        `Bearer ${SUPABASE_ANON_KEY}`
-
-                },
-
-                body:
-                    JSON.stringify({
-
-                        characters:
-                            data.characters,
-
-                        conversation,
-
-                        topic:
-                            data.topic,
-
-                        turns:
-                            20,
-
-                        relationships,
-
-                        directorInstruction:
-                            data.topic
-
-                    })
-
-            }
-        );
-
-
-    if (!response.ok) {
-
-        const text =
-            await response.text();
-
-
-        throw new Error(
-            `Supabase function error ${response.status}: ${text}`
-        );
+      throw new Error(
+        `Supabase function error ${response.status}: ${
+          JSON.stringify(result)
+        }`
+      );
 
     }
 
 
-    return await response.json();
+    if (
+      result.error
+    ) {
+
+      throw new Error(
+        result.error
+      );
+
+    }
+
+
+    return result;
+
+  } catch (error) {
+
+    console.error(
+      "PersonaLab AI error:",
+      error
+    );
+
+    addSystemMessage(
+      "AI error: " +
+      error.message
+    );
+
+    simulationRunning =
+      false;
+
+    simulationPaused =
+      false;
+
+    updateSimulationButton();
+
+    return null;
+
+  }
 
 }
 
 
 /* =========================================================
    RELATIONSHIPS
-   ========================================================= */
+========================================================= */
 
-function relationshipKey(
-    from,
-    to
+function applyRelationshipChanges(
+  changes
 ) {
 
-    return `${from}|||${to}`;
+  for (
+    const change
+    of changes
+  ) {
 
-}
-
-
-function getRelationship(
-    from,
-    to
-) {
-
-    const key =
-        relationshipKey(
-            from,
-            to
-        );
+    let relationship =
+      data.relationships.find(
+        item =>
+          item.from ===
+            change.from &&
+          item.to ===
+            change.to
+      );
 
 
-    if (
-        !data.relationships[key]
-    ) {
+    if (!relationship) {
 
-        data.relationships[key] = {
+      relationship = {
 
-            from,
+        from:
+          change.from,
 
-            to,
+        to:
+          change.to,
 
-            friendship:
-                0,
+        friendship:
+          0,
 
-            trust:
-                0,
+        trust:
+          0,
 
-            tension:
-                0
+        tension:
+          0
 
-        };
+      };
 
-    }
-
-
-    return data.relationships[key];
-
-}
-
-
-function processRelationships(
-    list
-) {
-
-    list.forEach(
-        rel => {
-
-            if (
-                !rel.from ||
-                !rel.to
-            ) {
-                return;
-            }
-
-
-            const relationship =
-                getRelationship(
-                    rel.from,
-                    rel.to
-                );
-
-
-            relationship.friendship +=
-                Number(
-                    rel.friendship
-                ) || 0;
-
-
-            relationship.trust +=
-                Number(
-                    rel.trust
-                ) || 0;
-
-
-            relationship.tension +=
-                Number(
-                    rel.tension
-                ) || 0;
-
-
-            relationship.friendship =
-                clamp(
-                    relationship.friendship,
-                    -100,
-                    100
-                );
-
-
-            relationship.trust =
-                clamp(
-                    relationship.trust,
-                    -100,
-                    100
-                );
-
-
-            relationship.tension =
-                clamp(
-                    relationship.tension,
-                    0,
-                    100
-                );
-
-        }
-    );
-
-
-    saveData();
-
-}
-
-
-function relationshipLabel(
-    rel
-) {
-
-    if (
-        rel.tension >= 70
-    ) {
-
-        return "Rivals";
+      data.relationships.push(
+        relationship
+      );
 
     }
 
 
-    if (
-        rel.trust <= -50
-    ) {
-
-        return "Distrustful";
-
-    }
-
-
-    if (
-        rel.friendship >= 70 &&
-        rel.trust >= 50
-    ) {
-
-        return "Close Friends";
-
-    }
+    relationship.friendship =
+      clamp(
+        (
+          relationship.friendship ||
+          0
+        ) +
+        (
+          Number(
+            change.friendship
+          ) ||
+          0
+        ),
+        -100,
+        100
+      );
 
 
-    if (
-        rel.friendship >= 35
-    ) {
+    relationship.trust =
+      clamp(
+        (
+          relationship.trust ||
+          0
+        ) +
+        (
+          Number(
+            change.trust
+          ) ||
+          0
+        ),
+        -100,
+        100
+      );
 
-        return "Friends";
 
-    }
+    relationship.tension =
+      clamp(
+        (
+          relationship.tension ||
+          0
+        ) +
+        (
+          Number(
+            change.tension
+          ) ||
+          0
+        ),
+        0,
+        100
+      );
 
+  }
 
-    if (
-        rel.tension >= 30
-    ) {
+  scheduleSave();
 
-        return "Tension";
-
-    }
-
-
-    return "Neutral";
+  renderRelationships();
 
 }
 
 
 function renderRelationships() {
 
-    const container =
-        document.getElementById(
-            "relationships"
+  const box =
+    document.getElementById(
+      "relationshipList"
+    );
+
+  box.innerHTML = "";
+
+  const characters =
+    getActiveCharacters();
+
+  const names =
+    new Set(
+      characters.map(
+        c => c.name
+      )
+    );
+
+  const relationships =
+    data.relationships.filter(
+      relationship =>
+        names.has(
+          relationship.from
+        ) &&
+        names.has(
+          relationship.to
+        )
+    );
+
+  if (
+    !relationships.length
+  ) {
+
+    box.innerHTML =
+      '<div class="muted">No relationship changes yet.</div>';
+
+    return;
+
+  }
+
+
+  relationships
+    .slice(
+      -20
+    )
+    .reverse()
+    .forEach(
+      relationship => {
+
+        const element =
+          document.createElement(
+            "div"
+          );
+
+        element.className =
+          "relationship";
+
+        element.textContent =
+          `${relationship.from} → ${relationship.to} • ` +
+          `F:${relationship.friendship || 0} ` +
+          `T:${relationship.trust || 0} ` +
+          `⚡:${relationship.tension || 0}`;
+
+        box.appendChild(
+          element
         );
 
-
-    const list =
-        Object.values(
-            data.relationships
-        );
-
-
-    if (!list.length) {
-
-        container.innerHTML = `
-            <div class="empty">
-                No relationships yet.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML = "";
-
-
-    list.forEach(
-        rel => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "relationship";
-
-
-            div.innerHTML = `
-
-                <div class="rel-names">
-                    ${escapeHTML(
-                        rel.from
-                    )}
-                    →
-                    ${escapeHTML(
-                        rel.to
-                    )}
-                </div>
-
-                <div class="rel-stats">
-
-                    ${relationshipLabel(
-                        rel
-                    )}
-
-                    · Friendship:
-                    ${rel.friendship}
-
-                    · Trust:
-                    ${rel.trust}
-
-                    · Tension:
-                    ${rel.tension}
-
-                </div>
-
-            `;
-
-
-            container.appendChild(
-                div
-            );
-
-        }
+      }
     );
 
 }
@@ -2407,180 +3010,1092 @@ function renderRelationships() {
 
 /* =========================================================
    EVENTS
-   ========================================================= */
+========================================================= */
 
-function processEvents(
-    events
+function addEvents(
+  events
 ) {
 
-    events.forEach(
-        event => {
+  for (
+    const event
+    of events
+  ) {
 
-            if (!event) {
-                return;
-            }
+    if (
+      !event ||
+      !event.description
+    ) {
 
+      continue;
 
-            const description =
-                typeof event ===
-                "string"
+    }
 
-                    ? event
+    data.events.unshift(
+      {
 
-                    : event.description;
+        id:
+          uid("event"),
 
+        description:
+          event.description,
 
-            if (!description) {
-                return;
-            }
+        createdAt:
+          Date.now()
 
-
-            data.events.unshift({
-
-                description,
-
-                time:
-                    new Date()
-                        .toLocaleTimeString()
-
-            });
-
-        }
+      }
     );
 
+  }
 
-    data.events =
-        data.events.slice(
-            0,
-            20
-        );
+  data.events =
+    data.events.slice(
+      0,
+      30
+    );
 
+  scheduleSave();
 
-    saveData();
+  renderEvents();
 
 }
 
 
 function renderEvents() {
 
-    const container =
-        document.getElementById(
-            "events"
+  const box =
+    document.getElementById(
+      "eventList"
+    );
+
+  box.innerHTML = "";
+
+  if (
+    !data.events.length
+  ) {
+
+    box.innerHTML =
+      '<div class="muted">Nothing notable yet.</div>';
+
+    return;
+
+  }
+
+
+  data.events
+    .slice(
+      0,
+      10
+    )
+    .forEach(
+      event => {
+
+        const element =
+          document.createElement(
+            "div"
+          );
+
+        element.className =
+          "event";
+
+        element.textContent =
+          event.description;
+
+        box.appendChild(
+          element
+        );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   CLEAR CHAT
+========================================================= */
+
+function clearConversation() {
+
+  if (
+    !confirm(
+      "Clear the current conversation?"
+    )
+  ) {
+
+    return;
+
+  }
+
+  simulationRunning =
+    false;
+
+  simulationPaused =
+    false;
+
+  pendingBatch =
+    null;
+
+  pendingDirectorMessage =
+    "";
+
+  data.messages =
+    [];
+
+  data.events =
+    [];
+
+  scheduleSave();
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   CHARACTER CREATOR
+========================================================= */
+
+function openCharacterModal(
+  id = null
+) {
+
+  document.getElementById(
+    "editingCharacterId"
+  ).value =
+    id || "";
+
+  document.getElementById(
+    "characterModalTitle"
+  ).textContent =
+    id
+      ? "Edit Character"
+      : "Create Character";
+
+
+  const character =
+    id
+      ? data.characters.find(
+          c => c.id === id
+        )
+      : null;
+
+
+  document.getElementById(
+    "characterName"
+  ).value =
+    character?.name ||
+    "";
+
+
+  document.getElementById(
+    "characterSpeaking"
+  ).value =
+    character?.speaking ||
+    "";
+
+
+  document.getElementById(
+    "characterPersonality"
+  ).value =
+    character?.personality ||
+    "";
+
+
+  document.getElementById(
+    "characterTraits"
+  ).value =
+    (
+      character?.traits ||
+      []
+    ).join(
+      ", "
+    );
+
+
+  document.getElementById(
+    "characterMemories"
+  ).value =
+    character?.memories ||
+    "";
+
+
+  document.getElementById(
+    "characterModal"
+  ).classList.add(
+    "show"
+  );
+
+}
+
+
+function saveCharacter() {
+
+  const name =
+    document.getElementById(
+      "characterName"
+    ).value.trim();
+
+  if (!name) {
+
+    alert(
+      "Give the character a name."
+    );
+
+    return;
+
+  }
+
+
+  const id =
+    document.getElementById(
+      "editingCharacterId"
+    ).value;
+
+
+  const character = {
+
+    id:
+      id ||
+      uid("character"),
+
+    name,
+
+    speaking:
+      document.getElementById(
+        "characterSpeaking"
+      ).value.trim(),
+
+    personality:
+      document.getElementById(
+        "characterPersonality"
+      ).value.trim(),
+
+    traits:
+      document.getElementById(
+        "characterTraits"
+      ).value
+        .split(",")
+        .map(
+          value =>
+            value.trim()
+        )
+        .filter(Boolean),
+
+    memories:
+      document.getElementById(
+        "characterMemories"
+      ).value.trim()
+
+  };
+
+
+  const index =
+    data.characters.findIndex(
+      c => c.id === id
+    );
+
+
+  if (
+    index >= 0
+  ) {
+
+    data.characters[index] =
+      character;
+
+  } else {
+
+    data.characters.push(
+      character
+    );
+
+  }
+
+
+  scheduleSave();
+
+  closeModal(
+    "characterModal"
+  );
+
+  renderAll();
+
+}
+
+
+function deleteCharacter(
+  id
+) {
+
+  if (
+    !confirm(
+      "Delete this character?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  data.characters =
+    data.characters.filter(
+      c => c.id !== id
+    );
+
+
+  data.rooms.forEach(
+    room => {
+
+      room.characterIds =
+        room.characterIds.filter(
+          characterId =>
+            characterId !== id
+        );
+
+    }
+  );
+
+
+  data.relationships =
+    data.relationships.filter(
+      relationship =>
+        relationship.from !==
+          data.characters.find(
+            c => c.id === id
+          )?.name &&
+        relationship.to !==
+          data.characters.find(
+            c => c.id === id
+          )?.name
+    );
+
+
+  scheduleSave();
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   CHARACTER LIST
+========================================================= */
+
+function renderCharacters() {
+
+  const box =
+    document.getElementById(
+      "characterList"
+    );
+
+  box.innerHTML = "";
+
+  if (
+    !data.characters.length
+  ) {
+
+    box.innerHTML =
+      '<div class="card"><div class="muted">No characters yet.</div></div>';
+
+    return;
+
+  }
+
+
+  data.characters.forEach(
+    character => {
+
+      const element =
+        document.createElement(
+          "div"
+        );
+
+      element.className =
+        "list-item";
+
+
+      const header =
+        document.createElement(
+          "div"
+        );
+
+      header.className =
+        "between";
+
+
+      const name =
+        document.createElement(
+          "strong"
+        );
+
+      name.textContent =
+        character.name;
+
+
+      const actions =
+        document.createElement(
+          "div"
+        );
+
+      actions.className =
+        "row";
+
+
+      const edit =
+        document.createElement(
+          "button"
+        );
+
+      edit.className =
+        "btn small";
+
+      edit.textContent =
+        "Edit";
+
+      edit.onclick =
+        () =>
+          openCharacterModal(
+            character.id
+          );
+
+
+      const remove =
+        document.createElement(
+          "button"
+        );
+
+      remove.className =
+        "btn small danger";
+
+      remove.textContent =
+        "Delete";
+
+      remove.onclick =
+        () =>
+          deleteCharacter(
+            character.id
+          );
+
+
+      actions.appendChild(
+        edit
+      );
+
+      actions.appendChild(
+        remove
+      );
+
+      header.appendChild(
+        name
+      );
+
+      header.appendChild(
+        actions
+      );
+
+
+      const personality =
+        document.createElement(
+          "p"
+        );
+
+      personality.textContent =
+        character.personality ||
+        "No personality description.";
+
+
+      const traits =
+        document.createElement(
+          "div"
         );
 
 
-    if (!data.events.length) {
+      (
+        character.traits ||
+        []
+      ).forEach(
+        trait => {
 
-        container.innerHTML = `
-            <div class="empty">
-                Nothing notable yet.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML = "";
-
-
-    data.events.forEach(
-        event => {
-
-            const div =
-                document.createElement(
-                    "div"
-                );
-
-
-            div.className =
-                "event";
-
-
-            div.innerHTML =
-                escapeHTML(
-                    event.description
-                );
-
-
-            container.appendChild(
-                div
+          const badge =
+            document.createElement(
+              "span"
             );
 
+          badge.className =
+            "badge";
+
+          badge.textContent =
+            trait;
+
+          traits.appendChild(
+            badge
+          );
+
         }
-    );
+      );
+
+
+      element.appendChild(
+        header
+      );
+
+      element.appendChild(
+        personality
+      );
+
+      element.appendChild(
+        traits
+      );
+
+
+      box.appendChild(
+        element
+      );
+
+    }
+  );
 
 }
 
 
 /* =========================================================
-   HELPERS
-   ========================================================= */
+   ROOM CREATOR
+========================================================= */
 
-function clamp(
-    value,
-    min,
-    max
+function openRoomModal(
+  id = null
 ) {
 
-    return Math.max(
-        min,
-        Math.min(
-            max,
-            value
+  document.getElementById(
+    "editingRoomId"
+  ).value =
+    id || "";
+
+
+  const room =
+    id
+      ? data.rooms.find(
+          r => r.id === id
         )
+      : null;
+
+
+  document.getElementById(
+    "roomName"
+  ).value =
+    room?.name ||
+    "";
+
+
+  document.getElementById(
+    "roomTopic"
+  ).value =
+    room?.topic ||
+    "A normal day together.";
+
+
+  const picker =
+    document.getElementById(
+      "roomCharacterPicker"
     );
 
-}
+  picker.innerHTML = "";
 
 
-function escapeHTML(
-    value
-) {
+  if (
+    !data.characters.length
+  ) {
 
-    return String(value)
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
+    picker.innerHTML =
+      '<div class="muted">Create some characters first.</div>';
+
+  } else {
+
+    data.characters.forEach(
+      character => {
+
+        const label =
+          document.createElement(
+            "label"
+          );
+
+        label.style.display =
+          "flex";
+
+        label.style.alignItems =
+          "center";
+
+        label.style.gap =
+          "8px";
+
+        label.style.background =
+          "#0b0d12";
+
+        label.style.border =
+          "1px solid #252a35";
+
+        label.style.borderRadius =
+          "9px";
+
+        label.style.padding =
+          "9px";
+
+
+        const checkbox =
+          document.createElement(
+            "input"
+          );
+
+        checkbox.type =
+          "checkbox";
+
+        checkbox.value =
+          character.id;
+
+        checkbox.style.width =
+          "auto";
+
+
+        checkbox.checked =
+          !!(
+            room &&
+            room.characterIds &&
+            room.characterIds.includes(
+              character.id
+            )
+          );
+
+
+        label.appendChild(
+          checkbox
         );
 
+        label.appendChild(
+          document.createTextNode(
+            character.name
+          )
+        );
+
+
+        picker.appendChild(
+          label
+        );
+
+      }
+    );
+
+  }
+
+
+  document.getElementById(
+    "roomModal"
+  ).classList.add(
+    "show"
+  );
+
+}
+
+
+function saveRoom() {
+
+  const name =
+    document.getElementById(
+      "roomName"
+    ).value.trim();
+
+  if (!name) {
+
+    alert(
+      "Give the room a name."
+    );
+
+    return;
+
+  }
+
+
+  const id =
+    document.getElementById(
+      "editingRoomId"
+    ).value;
+
+
+  const characterIds =
+    Array.from(
+      document.querySelectorAll(
+        "#roomCharacterPicker input[type='checkbox']:checked"
+      )
+    ).map(
+      checkbox =>
+        checkbox.value
+    );
+
+
+  const room = {
+
+    id:
+      id ||
+      uid("room"),
+
+    name,
+
+    topic:
+      document.getElementById(
+        "roomTopic"
+      ).value.trim(),
+
+    characterIds
+
+  };
+
+
+  const index =
+    data.rooms.findIndex(
+      room =>
+        room.id === id
+    );
+
+
+  if (
+    index >= 0
+  ) {
+
+    data.rooms[index] =
+      room;
+
+  } else {
+
+    data.rooms.push(
+      room
+    );
+
+  }
+
+
+  if (
+    !data.activeRoomId
+  ) {
+
+    data.activeRoomId =
+      room.id;
+
+  }
+
+
+  scheduleSave();
+
+  closeModal(
+    "roomModal"
+  );
+
+  renderAll();
+
 }
 
 
 /* =========================================================
-   INITIAL LOAD
-   ========================================================= */
+   ROOM LIST
+========================================================= */
 
-renderChat();
+function renderRooms() {
 
-renderCharacters();
+  const box =
+    document.getElementById(
+      "roomList"
+    );
 
-renderRooms();
+  box.innerHTML = "";
 
-renderRelationships();
 
-renderEvents();
+  if (
+    !data.rooms.length
+  ) {
 
-document.getElementById(
-    "topicText"
-).textContent =
-    data.topic;
+    box.innerHTML =
+      '<div class="card"><div class="muted">No rooms yet.</div></div>';
+
+    return;
+
+  }
+
+
+  data.rooms.forEach(
+    room => {
+
+      const element =
+        document.createElement(
+          "div"
+        );
+
+      element.className =
+        "list-item";
+
+
+      const header =
+        document.createElement(
+          "div"
+        );
+
+      header.className =
+        "between";
+
+
+      const name =
+        document.createElement(
+          "strong"
+        );
+
+      name.textContent =
+        room.name;
+
+
+      const actions =
+        document.createElement(
+          "div"
+        );
+
+      actions.className =
+        "row";
+
+
+      const enter =
+        document.createElement(
+          "button"
+        );
+
+      enter.className =
+        "btn small";
+
+      enter.textContent =
+        "Enter";
+
+      enter.onclick =
+        () =>
+          selectRoom(
+            room.id
+          );
+
+
+      const edit =
+        document.createElement(
+          "button"
+        );
+
+      edit.className =
+        "btn small";
+
+      edit.textContent =
+        "Edit";
+
+      edit.onclick =
+        () =>
+          openRoomModal(
+            room.id
+          );
+
+
+      const remove =
+        document.createElement(
+          "button"
+        );
+
+      remove.className =
+        "btn small danger";
+
+      remove.textContent =
+        "Delete";
+
+      remove.onclick =
+        () =>
+          deleteRoom(
+            room.id
+          );
+
+
+      actions.appendChild(
+        enter
+      );
+
+      actions.appendChild(
+        edit
+      );
+
+      actions.appendChild(
+        remove
+      );
+
+
+      header.appendChild(
+        name
+      );
+
+      header.appendChild(
+        actions
+      );
+
+
+      const topic =
+        document.createElement(
+          "p"
+        );
+
+      topic.textContent =
+        room.topic ||
+        "Free conversation";
+
+
+      const count =
+        document.createElement(
+          "div"
+        );
+
+      count.className =
+        "muted";
+
+      count.style.marginTop =
+        "5px";
+
+      count.textContent =
+        `${room.characterIds.length} character(s)`;
+
+
+      element.appendChild(
+        header
+      );
+
+      element.appendChild(
+        topic
+      );
+
+      element.appendChild(
+        count
+      );
+
+
+      box.appendChild(
+        element
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   SELECT / DELETE ROOM
+========================================================= */
+
+function selectRoom(
+  id
+) {
+
+  simulationRunning =
+    false;
+
+  simulationPaused =
+    false;
+
+  pendingBatch =
+    null;
+
+  pendingDirectorMessage =
+    "";
+
+  data.activeRoomId =
+    id;
+
+
+  const room =
+    getActiveRoom();
+
+
+  data.topic =
+    room?.topic ||
+    "A normal day together.";
+
+
+  scheduleSave();
+
+  renderAll();
+
+
+  const labButton =
+    document.querySelector(
+      ".nav-button"
+    );
+
+  showPage(
+    "lab",
+    labButton
+  );
+
+}
+
+
+function deleteRoom(
+  id
+) {
+
+  if (
+    !confirm(
+      "Delete this room?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  data.rooms =
+    data.rooms.filter(
+      room =>
+        room.id !== id
+    );
+
+
+  if (
+    data.activeRoomId ===
+    id
+  ) {
+
+    data.activeRoomId =
+      data.rooms[0]?.id ||
+      null;
+
+  }
+
+
+  scheduleSave();
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function closeModal(
+  id
+) {
+
+  document.getElementById(
+    id
+  ).classList.remove(
+    "show"
+  );
+
+}
+
+
+/* =========================================================
+   STARTUP
+========================================================= */
+
+loadLocal();
 
 </script>
 
